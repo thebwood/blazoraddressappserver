@@ -1,0 +1,10 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/AddressApp/AddressAppServer/.vs/AddressAppServer
+/.vs
+/AddressApp/AddressAppServer/AddressAppServer.ClassLibrary/bin/Debug/net8.0
+/AddressApp/AddressAppServer/AddressAppServer.ClassLibrary/obj
+/AddressApp/AddressAppServer/AddressAppServer.Web/bin/Debug/net8.0
+/AddressApp/AddressAppServer/AddressAppServer.Web/obj
