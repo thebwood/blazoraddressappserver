@@ -1,0 +1,42 @@
+﻿@inherits LayoutComponentBase
+
+<MudLayout>
+@* Required *@
+<MudThemeProvider />
+<MudPopoverProvider />
+
+@* Needed for dialogs *@
+<MudDialogProvider />
+
+@* Needed for snackbars *@
+<MudSnackbarProvider />
+
+
+@if(_viewModel.IsLoading)
+{
+    <MudOverlay Visible="true" DarkBackground="true" ZIndex="9999">
+        <MudProgressCircular 
+            Indeterminate="true"
+            Class="loading-overlay"    
+            Color="Color.Primary"
+            Style="position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 9999;" />
+    </MudOverlay>
+}
+
+<MudAppBar Class="pt-2 pb-2" Style="background-color: #f6f6f6; color: #222222;" Elevation="4">
+    <MudIconButton Icon="@Icons.Material.Filled.Menu" OnClick="ToggleDrawer" Edge="Edge.Start" />
+    <MudText Tyyo="Typo.H6" Class="ml-2">Address App</MudText>
+</MudAppBar>
+
+<MudDrawer Class="mt-4" Open="@_drawerOpen" ClipMode="DrawerClipMode.Always" Variant="DrawerVariant.Responsive" Elevation="1">
+    <MudNavMenu>
+        <NavMenu />
+    </MudNavMenu>
+</MudDrawer>
+
+<MudMainContent Class="mt-4">
+    @Body
+</MudMainContent>
+
+<Footer />
+</MudLayout>

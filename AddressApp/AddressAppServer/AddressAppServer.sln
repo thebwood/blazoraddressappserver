@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.12.35728.132 d17.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AddressAppServer.Web", "AddressAppServer.Web\AddressAppServer.Web.csproj", "{54C471E8-269D-4131-940C-343E2E887DFC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AddressAppServer.ClassLibrary", "AddressAppServer.ClassLibrary\AddressAppServer.ClassLibrary.csproj", "{9E870251-8515-46C7-86C5-84CE02BD1F07}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{54C471E8-269D-4131-940C-343E2E887DFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{54C471E8-269D-4131-940C-343E2E887DFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{54C471E8-269D-4131-940C-343E2E887DFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54C471E8-269D-4131-940C-343E2E887DFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E870251-8515-46C7-86C5-84CE02BD1F07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E870251-8515-46C7-86C5-84CE02BD1F07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E870251-8515-46C7-86C5-84CE02BD1F07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E870251-8515-46C7-86C5-84CE02BD1F07}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
