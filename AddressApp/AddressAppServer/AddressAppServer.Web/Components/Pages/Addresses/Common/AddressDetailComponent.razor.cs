@@ -39,7 +39,8 @@ namespace AddressAppServer.Web.Components.Pages.Addresses.Common
         private void AddressLoaded(AddressModel address)
         {
             _address = address;
-            StateHasChanged();
+            _editContext = new(_address);
+            //StateHasChanged();
         }
 
         private async Task SaveAddress()

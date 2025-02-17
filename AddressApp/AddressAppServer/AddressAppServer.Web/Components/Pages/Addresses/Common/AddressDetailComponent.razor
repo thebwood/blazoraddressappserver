@@ -13,22 +13,28 @@
 
             <div class="mb-2 mt-2">
                 <MudTextField @bind-Value="_address.StreetAddress" Label="Street Address" Required="true" />
+                <ValidationMessage For="() => _address.StreetAddress" />
             </div>
 
             <div class="mb-2 mt-2">
                 <MudTextField @bind-Value="_address.StreetAddress2" Label="Street Address 2" />
+                <ValidationMessage For="() => _address.StreetAddress2" />
             </div>
 
             <div class="mb-2 mt-2">
                 <MudTextField @bind-Value="_address.City" Label="City" Required="true" />
+                <ValidationMessage For="() => _address.City" />
             </div>
 
             <div class="mb-2 mt-2">
                 <MudTextField @bind-Value="_address.State" Label="State" Required="true" />
+                <ValidationMessage For="() => _address.State" />
+
             </div>
 
             <div class="mb-2 mt-2">
                 <MudTextField @bind-Value="_address.PostalCode" Label="Postal Code" Required="true" />
+                <ValidationMessage For="() => _address.PostalCode" />
             </div>
 
             <div class="mt-2">

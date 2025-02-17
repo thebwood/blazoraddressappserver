@@ -8,3 +8,5 @@
 /AddressApp/AddressAppServer/AddressAppServer.ClassLibrary/obj
 /AddressApp/AddressAppServer/AddressAppServer.Web/bin/Debug/net8.0
 /AddressApp/AddressAppServer/AddressAppServer.Web/obj
+/AddressApp/AddressAppServer/AddressAppServer.Web/Logs
+/AddressApp/AddressAppServer/.vs/ProjectEvaluation

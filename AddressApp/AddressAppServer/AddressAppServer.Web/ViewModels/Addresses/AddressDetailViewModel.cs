@@ -14,19 +14,16 @@ namespace AddressAppServer.Web.ViewModels.Addresses
 
         public AddressDetailViewModel(IAddressClient addressService)
         {
-            _addressService = addressService;
-        }
-        public void GetAddress()
-        {
-            OnAddressLoaded?.Invoke(new AddressModel());
+            _addressService = addressService ?? throw new ArgumentNullException(nameof(addressService));
         }
 
-        
+        public void GetAddress() => OnAddressLoaded?.Invoke(new AddressModel());
+
         public async Task GetAddress(Guid id)
         {
-            Result<GetAddressResponseDTO>? response = await _addressService.GetAddress(id);
+            var response = await _addressService.GetAddress(id).ConfigureAwait(false);
 
-            if (response == null || response.Value == null)
+            if (response?.Value == null)
             {
                 OnAddressLoaded?.Invoke(null);
                 return;
@@ -36,36 +33,29 @@ namespace AddressAppServer.Web.ViewModels.Addresses
 
         internal async Task SaveAddressAsync(AddressModel address)
         {
-            if(IsNew)
+            var addressDTO = new AddressDTO
             {
-                AddAddressRequestDTO addressDTO = new AddAddressRequestDTO
-                {
-                };
+                Id = address.Id,
+                StreetAddress = address.StreetAddress,
+                StreetAddress2 = address.StreetAddress2,
+                City = address.City,
+                State = address.State,
+                PostalCode = address.PostalCode
+            };
 
-                var result = await _addressService.AddAddress(addressDTO);
-                OnAddressSaved?.Invoke(result);
-
+            Result result;
+            if (IsNew)
+            {
+                AddAddressRequestDTO? addAddressDTO = new AddAddressRequestDTO { Address = addressDTO };
+                result = await _addressService.CreateAddress(addAddressDTO);
             }
             else
             {
-                UpdateAddressRequestDTO? addressDTO = new UpdateAddressRequestDTO
-                {
-                    Address = new AddressDTO
-                    {
-                        Id = address.Id,
-                        StreetAddress = address.StreetAddress,
-                        StreetAddress2 = address.StreetAddress2,
-                        City = address.City,
-                        State = address.State,
-                        PostalCode = address.PostalCode
-                    }
-
-                };
-                var result = await _addressService.UpdateAddress(addressDTO);
-                OnAddressSaved?.Invoke(result);
-
+                UpdateAddressRequestDTO? updateAddressDTO = new UpdateAddressRequestDTO { Address = addressDTO };
+                result = await _addressService.UpdateAddress(updateAddressDTO);
             }
 
+            OnAddressSaved?.Invoke(result);
         }
 
         public Action<AddressModel>? OnAddressLoaded { get; set; }

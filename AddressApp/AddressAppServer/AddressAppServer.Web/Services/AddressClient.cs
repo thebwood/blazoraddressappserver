@@ -39,28 +39,30 @@ namespace AddressAppServer.Web.Services
             return result;
         }
 
-        public async Task<Result> AddAddress(AddAddressRequestDTO requestDTO)
+        public async Task<Result> CreateAddress(AddAddressRequestDTO requestDTO)
         {
-            StringContent content = new StringContent(JsonSerializer.Serialize(requestDTO), Encoding.UTF8, "application/json");
-            using HttpResponseMessage response = await _httpClient.PostAsync("api/addresses", content);
+            Result result = new();
+            string jsonPayload = JsonSerializer.Serialize(requestDTO);
+            StringContent? requestContent = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-            return new Result
-            {
-                StatusCode = response.StatusCode,
-                Errors = response.IsSuccessStatusCode ? new List<Error> { Error.None } : new List<Error> { new Error("Error.AddAddress", response.ReasonPhrase) }
-            };
+            using HttpResponseMessage response = await _httpClient.PostAsync("api/addresses", requestContent);
+            string? content = await response.Content.ReadAsStringAsync();
+            result = JsonSerializer.Deserialize<Result>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new();
+
+            return result;
         }
 
-        public async Task<Result> UpdateAddress(UpdateAddressRequestDTO addressDTO)
+        public async Task<Result> UpdateAddress(UpdateAddressRequestDTO requestDTO)
         {
-            StringContent content = new StringContent(JsonSerializer.Serialize(addressDTO), Encoding.UTF8, "application/json");
-            using HttpResponseMessage response = await _httpClient.PutAsync("api/addresses", content);
+            Result result = new();
+            string jsonPayload = JsonSerializer.Serialize(requestDTO);
+            StringContent? requestContent = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-            return new Result
-            {
-                StatusCode = response.StatusCode,
-                Errors = response.IsSuccessStatusCode ? new List<Error> { Error.None } : new List<Error> { new Error("Error.UpdateAddress", response.ReasonPhrase) }
-            };
+            using HttpResponseMessage response = await _httpClient.PutAsync("api/addresses", requestContent);
+            string? content = await response.Content.ReadAsStringAsync();
+            result = JsonSerializer.Deserialize<Result>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new();
+
+            return result;
         }
 
         public async Task<Result> DeleteAddress(Guid id)

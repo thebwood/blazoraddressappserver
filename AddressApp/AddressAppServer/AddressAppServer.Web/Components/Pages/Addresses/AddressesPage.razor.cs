@@ -27,5 +27,11 @@ namespace AddressAppServer.Web.Components.Pages.Addresses
                 _stateViewModel.IsLoading = false;
             }
         }
+
+        private void CreateAddress()
+        {
+            NavigationManager.NavigateTo($"/Addresses/Create");
+        }
+
     }
 }
