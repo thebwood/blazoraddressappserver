@@ -1,0 +1,26 @@
+﻿@inherits CommonBase
+
+<MudTable Items="_addresses" Hover="true" Striped="true">
+    <HeaderContent>
+        <MudTh>Edit</MudTh>
+        <MudTh>Street</MudTh>
+        <MudTh>Street 2</MudTh>
+        <MudTh>City</MudTh>
+        <MudTh>State</MudTh>
+        <MudTh>Zip</MudTh>
+        <MudTh>Delete</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => EditAddress(context.Id)">Edit</MudButton>
+        </MudTd>
+        <MudTd>@context.StreetAddress</MudTd>
+        <MudTd>@context.StreetAddress2</MudTd>
+        <MudTd>@context.City</MudTd>
+        <MudTd>@context.State</MudTd>
+        <MudTd>@context.PostalCode</MudTd>
+        <MudTd>
+            <MudButton Variant="Variant.Filled" Color="Color.Error" OnClick="() => DeleteAddress(context.Id)">Delete</MudButton>
+        </MudTd>
+    </RowTemplate>
+</MudTable>

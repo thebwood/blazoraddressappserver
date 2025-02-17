@@ -9,20 +9,23 @@ namespace AddressAppServer.Web.Services
     public class AddressClient : IAddressClient
     {
         private readonly HttpClient _httpClient;
-        public IConfiguration _configuration { get; }
+        private readonly ILogger<AddressClient> _logger;
 
-        public AddressClient(HttpClient httpClient, IConfiguration configuration)
+        public AddressClient(HttpClient httpClient, ILogger<AddressClient> logger)
         {
             _httpClient = httpClient;
-            _configuration = configuration;
-            _httpClient.DefaultRequestHeaders.Clear();
-            _httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+            _logger = logger;
         }
 
         public async Task<Result<GetAddressesResponseDTO>> GetAddresses()
         {
-            var response = await _httpClient.GetFromJsonAsync<GetAddressesResponseDTO>("api/Addresses");
-            return new Result<GetAddressesResponseDTO>(response, true, Error.None);
+            Result<GetAddressesResponseDTO> result = new();
+
+            var response = await _httpClient.GetAsync("api/Addresses");
+            string? content = await response.Content.ReadAsStringAsync();
+            result = JsonSerializer.Deserialize<Result<GetAddressesResponseDTO>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new();
+
+            return result;
         }
 
         public async Task<Result<GetAddressResponseDTO>> GetAddress(Guid id)

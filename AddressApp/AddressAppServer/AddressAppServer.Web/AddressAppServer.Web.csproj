@@ -12,7 +12,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Components\Pages\Addresses\Common\" />
 		<Folder Include="ViewModels\Addresses\" />
 	</ItemGroup>
 
