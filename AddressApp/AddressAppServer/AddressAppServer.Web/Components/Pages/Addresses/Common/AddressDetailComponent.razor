@@ -1,0 +1,39 @@
+﻿@inherits CommonBase
+
+<EditForm EditContext="_editContext">
+    <DataAnnotationsValidator />
+    <MudCard>
+        <MudCardContent>
+            <div class="mb-2 mt-2">
+                <MudButton OnClick="BackToAddresses" Class="bg-primary text-white">Back to Addresses</MudButton>
+            </div>
+            <div class="mb-2 mt-2">
+                <MudText Typo="Typo.h6">Address Details</MudText>
+            </div>
+
+            <div class="mb-2 mt-2">
+                <MudTextField @bind-Value="_address.StreetAddress" Label="Street Address" Required="true" />
+            </div>
+
+            <div class="mb-2 mt-2">
+                <MudTextField @bind-Value="_address.StreetAddress2" Label="Street Address 2" />
+            </div>
+
+            <div class="mb-2 mt-2">
+                <MudTextField @bind-Value="_address.City" Label="City" Required="true" />
+            </div>
+
+            <div class="mb-2 mt-2">
+                <MudTextField @bind-Value="_address.State" Label="State" Required="true" />
+            </div>
+
+            <div class="mb-2 mt-2">
+                <MudTextField @bind-Value="_address.PostalCode" Label="Postal Code" Required="true" />
+            </div>
+
+            <div class="mt-2">
+                <MudButton OnClick="SaveAddress" Color="Color.Primary" Variant="Variant.Filled">Save</MudButton>
+            </div>
+        </MudCardContent>
+    </MudCard>
+</EditForm>

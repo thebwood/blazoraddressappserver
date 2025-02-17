@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MudBlazor;
 
 namespace AddressAppServer.Web.BaseClasses
 {
@@ -6,7 +7,8 @@ namespace AddressAppServer.Web.BaseClasses
     {
         [Inject]
         public NavigationManager NavigationManager { get; set; }
-
+        [Inject]
+        public ISnackbar Snackbar { get; set; }
 
     }
 }

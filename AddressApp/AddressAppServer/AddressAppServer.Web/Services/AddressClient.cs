@@ -30,8 +30,13 @@ namespace AddressAppServer.Web.Services
 
         public async Task<Result<GetAddressResponseDTO>> GetAddress(Guid id)
         {
-            var response = await _httpClient.GetFromJsonAsync<GetAddressResponseDTO>($"api/addresses/{id}");
-            return new Result<GetAddressResponseDTO>(response, true, Error.None);
+            Result<GetAddressResponseDTO> result = new();
+
+            var response = await _httpClient.GetAsync($"api/addresses/{id}");
+            string? content = await response.Content.ReadAsStringAsync();
+            result = JsonSerializer.Deserialize<Result<GetAddressResponseDTO>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new();
+
+            return result;
         }
 
         public async Task<Result> AddAddress(AddAddressRequestDTO requestDTO)

@@ -8,63 +8,67 @@ namespace AddressAppServer.Web.ViewModels.Addresses
 {
     public class AddressDetailViewModel
     {
+        public bool IsNew { get; internal set; }
+
         private readonly IAddressClient _addressService;
 
         public AddressDetailViewModel(IAddressClient addressService)
         {
             _addressService = addressService;
         }
+        public void GetAddress()
+        {
+            OnAddressLoaded?.Invoke(new AddressModel());
+        }
 
+        
         public async Task GetAddress(Guid id)
         {
             Result<GetAddressResponseDTO>? response = await _addressService.GetAddress(id);
 
             if (response == null || response.Value == null)
             {
-                AddressLoaded?.Invoke(null);
+                OnAddressLoaded?.Invoke(null);
                 return;
             }
-            AddressLoaded?.Invoke(AddressMapper.MapToAddressModel(response.Value.Address));
+            OnAddressLoaded?.Invoke(AddressMapper.MapToAddressModel(response.Value.Address));
         }
 
-        public async Task CreateAddress(AddressModel address)
+        internal async Task SaveAddressAsync(AddressModel address)
         {
-            AddAddressRequestDTO addressDTO = new AddAddressRequestDTO
+            if(IsNew)
             {
-                Address = new AddressDTO
+                AddAddressRequestDTO addressDTO = new AddAddressRequestDTO
                 {
-                    Id = address.Id,
-                    StreetAddress = address.StreetAddress,
-                    StreetAddress2 = address.StreetAddress2,
-                    City = address.City,
-                    State = address.State,
-                    PostalCode = address.PostalCode
-                }
-            };
-            var result = await _addressService.AddAddress(addressDTO);
-            AddressCreated?.Invoke(result.Success);
+                };
+
+                var result = await _addressService.AddAddress(addressDTO);
+                OnAddressSaved?.Invoke(result);
+
+            }
+            else
+            {
+                UpdateAddressRequestDTO? addressDTO = new UpdateAddressRequestDTO
+                {
+                    Address = new AddressDTO
+                    {
+                        Id = address.Id,
+                        StreetAddress = address.StreetAddress,
+                        StreetAddress2 = address.StreetAddress2,
+                        City = address.City,
+                        State = address.State,
+                        PostalCode = address.PostalCode
+                    }
+
+                };
+                var result = await _addressService.UpdateAddress(addressDTO);
+                OnAddressSaved?.Invoke(result);
+
+            }
+
         }
 
-        public async Task UpdateAddress(AddressModel address)
-        {
-            UpdateAddressRequestDTO? addressDTO = new UpdateAddressRequestDTO
-            {
-                Address = new AddressDTO
-                {
-                    Id = address.Id,
-                    StreetAddress = address.StreetAddress,
-                    StreetAddress2 = address.StreetAddress2,
-                    City = address.City,
-                    State = address.State,
-                    PostalCode = address.PostalCode
-                }
-            };
-            var result = await _addressService.UpdateAddress(addressDTO);
-            AddressUpdated?.Invoke(result.Success);
-        }
-
-        public Action<AddressModel>? AddressLoaded { get; set; }
-        public Action<bool>? AddressCreated { get; set; }
-        public Action<bool>? AddressUpdated { get; set; }
+        public Action<AddressModel>? OnAddressLoaded { get; set; }
+        public Action<Result>? OnAddressSaved { get; set; }
     }
 }

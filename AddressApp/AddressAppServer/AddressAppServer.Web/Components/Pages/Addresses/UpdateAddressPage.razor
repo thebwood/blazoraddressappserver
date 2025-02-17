@@ -1,5 +1,5 @@
-﻿<h3>UpdateAddressPage</h3>
+﻿@inherits CommonBase
+@using AddressAppServer.Web.Components.Pages.Addresses.Common
+@page "/addresses/{AddressId:guid}"
 
-@code {
-
-}
+<AddressDetailComponent AddressesViewModel="_addressViewModel"/>

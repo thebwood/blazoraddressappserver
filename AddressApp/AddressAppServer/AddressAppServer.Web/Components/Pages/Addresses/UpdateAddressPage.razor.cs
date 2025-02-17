@@ -5,10 +5,12 @@ using Microsoft.AspNetCore.Components;
 
 namespace AddressAppServer.Web.Components.Pages.Addresses
 {
-    public partial class AddressesPage : CommonBase
+    public partial class UpdateAddressPage : CommonBase
     {
+        [Parameter]
+        public Guid AddressId { get; set; }
         [Inject]
-        private AddressesViewModel AddressesViewModel { get; set; }
+        private AddressDetailViewModel _addressViewModel { get; set; }
         [Inject]
         private UIStateViewModel _stateViewModel { get; set; }
 
@@ -19,8 +21,9 @@ namespace AddressAppServer.Web.Components.Pages.Addresses
         {
             try
             {
+                _addressViewModel.IsNew = false;
                 _stateViewModel.IsLoading = true;
-                await AddressesViewModel.GetAddresses();
+                await _addressViewModel.GetAddress(AddressId);
             }
             finally
             {

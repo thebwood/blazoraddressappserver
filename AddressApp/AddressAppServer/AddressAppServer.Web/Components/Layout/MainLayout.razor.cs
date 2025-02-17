@@ -7,7 +7,7 @@ namespace AddressAppServer.Web.Components.Layout
     public partial class MainLayout : LayoutComponentBase, IDisposable
     {
         [Inject]
-        private UIStateViewModel _viewModel { get; set; } = default!;
+        private UIStateViewModel _viewModel { get; set; }
 
         private bool _drawerOpen = false;
 

@@ -5,22 +5,23 @@ using Microsoft.AspNetCore.Components;
 
 namespace AddressAppServer.Web.Components.Pages.Addresses
 {
-    public partial class AddressesPage : CommonBase
+    public partial class CreateAddressPage : CommonBase
     {
         [Inject]
-        private AddressesViewModel AddressesViewModel { get; set; }
+        private AddressDetailViewModel _addressViewModel { get; set; }
         [Inject]
         private UIStateViewModel _stateViewModel { get; set; }
 
         [Inject]
         private ILogger<AddressesPage> Logger { get; set; }
 
-        protected override async Task OnInitializedAsync()
+        protected override void OnInitialized()
         {
             try
             {
+                _addressViewModel.IsNew = true;
                 _stateViewModel.IsLoading = true;
-                await AddressesViewModel.GetAddresses();
+                _addressViewModel.GetAddress();
             }
             finally
             {
