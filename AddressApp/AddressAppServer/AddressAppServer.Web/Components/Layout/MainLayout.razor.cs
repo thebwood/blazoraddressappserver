@@ -11,17 +11,14 @@ namespace AddressAppServer.Web.Components.Layout
 
         private bool _drawerOpen = false;
 
-        protected override async Task OnInitializedAsync()
+        protected override void OnInitialized()
         {
             _viewModel.PropertyChanged += OnPropertyChanged;
         }
 
         private async void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
         {
-            await InvokeAsync(() =>
-            {
-                StateHasChanged();
-            });
+            await InvokeAsync(StateHasChanged);
         }
 
         private void ToggleDrawer()
