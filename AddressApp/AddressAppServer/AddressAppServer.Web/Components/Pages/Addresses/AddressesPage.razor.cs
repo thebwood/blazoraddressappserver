@@ -40,7 +40,7 @@ namespace AddressAppServer.Web.Components.Pages.Addresses
         {
             try
             {
-                Snackbar.Add("Address Deleted Successfully", Severity.Success);
+                Snackbar.Add(result.Message, Severity.Success);
                 _stateViewModel.IsLoading = true;
                 AddressesViewModel.GetAddresses();
             }
