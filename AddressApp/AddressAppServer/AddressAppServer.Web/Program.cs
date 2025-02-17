@@ -1,7 +1,9 @@
 using AddressAppServer.Web.Common;
 using AddressAppServer.Web.Components;
 using AddressAppServer.Web.Extensions;
+using AddressAppServer.Web.Middlewares;
 using MudBlazor.Services;
+using Serilog;
 
 
 
@@ -29,7 +31,18 @@ if (string.IsNullOrEmpty(baseAddress))
 
 builder.Services.AddPresentation(baseAddress);
 
+builder.Host.UseSerilog((context, services, configuration) =>
+{
+    configuration.ReadFrom.Configuration(context.Configuration);
+});
+
+builder.Services.AddLogging(loggingBuilder =>
+{
+    loggingBuilder.AddSerilog();
+});
+
 var app = builder.Build();
+app.UseMiddleware<GlobalExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

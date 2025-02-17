@@ -18,5 +18,17 @@ namespace AddressAppServer.Web.Mappers
             };
         }
 
+        public static AddressDTO MapToAddressDTO(AddressModel model)
+        {
+            return new AddressDTO
+            {
+                Id = model.Id,
+                StreetAddress = model.StreetAddress,
+                StreetAddress2 = model.StreetAddress2,
+                City = model.City,
+                State = model.State,
+                PostalCode = model.PostalCode
+            };
+        }
     }
 }
