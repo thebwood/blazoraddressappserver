@@ -67,13 +67,13 @@ namespace AddressAppServer.Web.Services
 
         public async Task<Result> DeleteAddress(Guid id)
         {
-            using HttpResponseMessage response = await _httpClient.DeleteAsync($"api/addresses/{id}");
+            Result result = new();
 
-            return new Result
-            {
-                StatusCode = response.StatusCode,
-                Errors = response.IsSuccessStatusCode ? new List<Error> { Error.None } : new List<Error> { new Error("Error.DeleteAddress", response.ReasonPhrase) }
-            };
+            var response = await _httpClient.DeleteAsync($"api/addresses/{id}");
+            string? content = await response.Content.ReadAsStringAsync();
+            result = JsonSerializer.Deserialize<Result>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new();
+
+            return result;
         }
     }
 }

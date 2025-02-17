@@ -31,7 +31,7 @@ namespace AddressAppServer.Web.Components.Pages.Addresses.Common
         {
             if(result.Success)
             {
-                Snackbar.Add("Address Saved Successfully");
+                Snackbar.Add("Address Saved Successfully", Severity.Success);
                 NavigationManager.NavigateTo($"/Addresses");
             }
         }

@@ -1,6 +1,8 @@
-﻿using AddressAppServer.ClassLibrary.Models;
+﻿using AddressAppServer.ClassLibrary.Common;
+using AddressAppServer.ClassLibrary.Models;
 using AddressAppServer.Web.BaseClasses;
 using AddressAppServer.Web.ViewModels.Addresses;
+using AddressAppServer.Web.ViewModels.Common;
 using Microsoft.AspNetCore.Components;
 
 namespace AddressAppServer.Web.Components.Pages.Addresses.Common
@@ -10,13 +12,16 @@ namespace AddressAppServer.Web.Components.Pages.Addresses.Common
         [Parameter]
         public AddressesViewModel AddressesViewModel { get; set; }
 
+        [Inject]
+        private UIStateViewModel _stateViewModel { get; set; }
+
         private List<AddressModel> _addresses { get; set; } = new ();
         protected override async Task OnInitializedAsync()
         {
-            AddressesViewModel.AddressesLoaded += OnAddressesLoaded;
+            AddressesViewModel.OnAddressesLoaded += AddressesLoaded;
         }
 
-        private void OnAddressesLoaded(List<AddressModel> list)
+        private void AddressesLoaded(List<AddressModel> list)
         {
             _addresses = list;
             StateHasChanged();
@@ -24,17 +29,26 @@ namespace AddressAppServer.Web.Components.Pages.Addresses.Common
 
         public void Dispose()
         {
-            AddressesViewModel.AddressesLoaded -= OnAddressesLoaded;
+            AddressesViewModel.OnAddressesLoaded -= AddressesLoaded;
         }
+
 
         public void EditAddress(Guid id)
         {
             NavigationManager.NavigateTo($"/addresses/{id}");
         }
 
-        public void DeleteAddress(Guid id)
+        public async Task DeleteAddress(Guid id)
         {
-            // Implement delete functionality here
+            try
+            {
+                _stateViewModel.IsLoading = true;
+                await AddressesViewModel.DeleteAddress(id);
+            }
+            finally
+            {
+                _stateViewModel.IsLoading = false;
+            }
         }
 
     }

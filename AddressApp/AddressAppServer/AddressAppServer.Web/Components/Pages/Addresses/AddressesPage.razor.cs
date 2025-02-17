@@ -1,11 +1,13 @@
-﻿using AddressAppServer.Web.BaseClasses;
+﻿using AddressAppServer.ClassLibrary.Common;
+using AddressAppServer.Web.BaseClasses;
 using AddressAppServer.Web.ViewModels.Addresses;
 using AddressAppServer.Web.ViewModels.Common;
 using Microsoft.AspNetCore.Components;
+using MudBlazor;
 
 namespace AddressAppServer.Web.Components.Pages.Addresses
 {
-    public partial class AddressesPage : CommonBase
+    public partial class AddressesPage : CommonBase, IDisposable
     {
         [Inject]
         private AddressesViewModel AddressesViewModel { get; set; }
@@ -17,6 +19,8 @@ namespace AddressAppServer.Web.Components.Pages.Addresses
 
         protected override async Task OnInitializedAsync()
         {
+            AddressesViewModel.OnAddressesDeleted += AddressesDeleted;
+
             try
             {
                 _stateViewModel.IsLoading = true;
@@ -32,6 +36,23 @@ namespace AddressAppServer.Web.Components.Pages.Addresses
         {
             NavigationManager.NavigateTo($"/Addresses/Create");
         }
+        private void AddressesDeleted(Result result)
+        {
+            try
+            {
+                Snackbar.Add("Address Deleted Successfully", Severity.Success);
+                _stateViewModel.IsLoading = true;
+                AddressesViewModel.GetAddresses();
+            }
+            finally
+            {
+                _stateViewModel.IsLoading = false;
+            }
+        }
 
+        public void Dispose()
+        {
+            AddressesViewModel.OnAddressesDeleted -= AddressesDeleted;
+        }
     }
 }

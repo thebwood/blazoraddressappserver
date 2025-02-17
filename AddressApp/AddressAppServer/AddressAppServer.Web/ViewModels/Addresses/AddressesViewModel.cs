@@ -21,7 +21,7 @@ namespace AddressAppServer.Web.ViewModels.Addresses
             if (result.Success)
             {
                 List<AddressModel> addressViewModels = result.Value.AddressList.Select(dto => AddressMapper.MapToAddressModel(dto)).ToList();
-                OnAddressesLoaded(addressViewModels);
+                AddressesLoaded(addressViewModels);
             }
             else
             {
@@ -30,12 +30,28 @@ namespace AddressAppServer.Web.ViewModels.Addresses
             }
         }
 
-
-        public Action<List<AddressModel>>? AddressesLoaded;
-
-        protected virtual void OnAddressesLoaded(List<AddressModel> addresses)
+        public async Task DeleteAddress(Guid id)
         {
-            AddressesLoaded?.Invoke(addresses);
+            Result result = await _addressService.DeleteAddress(id);
+            if (result.Success)
+            {
+                AddressesDeleted(result);
+            }
         }
+
+        private void AddressesLoaded(List<AddressModel> addresses)
+        {
+            OnAddressesLoaded?.Invoke(addresses);
+        }
+
+        private void AddressesDeleted(Result result)
+        {
+            OnAddressesDeleted?.Invoke(result);
+        }
+
+
+        public Action<List<AddressModel>>? OnAddressesLoaded;
+        public Action<Result>? OnAddressesDeleted;
+
     }
 }
