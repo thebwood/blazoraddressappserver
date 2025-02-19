@@ -3,13 +3,23 @@
 @page "/login"
 @using AddressAppServer.ClassLibrary.Models
 
-<EditForm Model="loginModel" OnValidSubmit="HandleLogin">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+<MudContainer MaxWidth="MaxWidth.Small" Class="d-flex justify-center align-center min-height-100">
+    <MudPaper Class="p-4">
+        <MudText Typo="Typo.h5" Align="Align.Center" GutterBottom="true">Login</MudText>
+        <EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
 
-    <MudTextField @bind-Value="loginModel.Username" Label="Username" Required="true" />
-    <MudTextField @bind-Value="loginModel.Password" Label="Password" InputType="InputType.Password" Required="true" />
+            <MudTextField @bind-Value="loginModel.Username" Label="Username" Required="true" FullWidth="true" />
+            <MudTextField @bind-Value="loginModel.Password" Label="Password" InputType="InputType.Password" Required="true" FullWidth="true" />
 
-    <MudButton Type="Submit" Color="Color.Primary">Login</MudButton>
-</EditForm>
+            <MudButton Type="Submit" Color="Color.Primary" Variant="Variant.Filled" FullWidth="true">Login</MudButton>
+        </EditForm>
+    </MudPaper>
+</MudContainer>
 
+<style>
+    .min-height-100 {
+        min-height: 100vh;
+    }
+</style>

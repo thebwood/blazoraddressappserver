@@ -19,8 +19,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<Folder Include="Components\Pages\Admin\" />
 		<Folder Include="ViewModels\Addresses\" />
+		<Folder Include="ViewModels\Auth\" />
+		<Folder Include="ViewModels\Admin\" />
 	</ItemGroup>
 
 	<ItemGroup>
