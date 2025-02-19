@@ -21,6 +21,14 @@ namespace AddressAppServer.Web.Extensions
                 .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(retryAttempt));
 
             // Add HttpClient with retry policy and exception handling
+            services.AddHttpClient<IAuthClient, AuthClient>((serviceProvider, client) => {
+                ApiSettings? apiSettings = serviceProvider.GetRequiredService<IOptions<ApiSettings>>().Value;
+                client.BaseAddress = new Uri(baseAddress);
+
+            })
+                .AddPolicyHandler(retryPolicy); // Attach the retry policy
+
+
             services.AddHttpClient<IAddressClient, AddressClient>((serviceProvider, client) => {
                 ApiSettings? apiSettings = serviceProvider.GetRequiredService<IOptions<ApiSettings>>().Value;
                 client.BaseAddress = new Uri(baseAddress);

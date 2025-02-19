@@ -1,0 +1,15 @@
+﻿@inherits CommonBase
+
+@page "/login"
+@using AddressAppServer.ClassLibrary.Models
+
+<EditForm Model="loginModel" OnValidSubmit="HandleLogin">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <MudTextField @bind-Value="loginModel.Username" Label="Username" Required="true" />
+    <MudTextField @bind-Value="loginModel.Password" Label="Password" InputType="InputType.Password" Required="true" />
+
+    <MudButton Type="Submit" Color="Color.Primary">Login</MudButton>
+</EditForm>
+

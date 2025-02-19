@@ -7,6 +7,7 @@ namespace AddressAppServer.ClassLibrary.Common
         public HttpStatusCode StatusCode { get; set; }
         public bool Success { get { return Errors.Count == 0; } }
         public string Message { get; set; }
+        public string Token { get; set; }
         public List<Error> Errors { get; set; } = new();
     }
 
@@ -18,22 +19,14 @@ namespace AddressAppServer.ClassLibrary.Common
             _value = default;
             Errors = new();
         }
-        public TValue Value
+        public TValue? Value
         {
             get
             {
-                if (_value == null)
-                {
-                    throw new InvalidOperationException("Value is null");
-                }
                 return _value;
             }
             set
             {
-                if (value == null)
-                {
-                    throw new InvalidOperationException("Value is null");
-                }
                 _value = value;
             }
         }

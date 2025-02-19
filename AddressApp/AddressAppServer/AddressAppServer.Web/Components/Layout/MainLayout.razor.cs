@@ -1,5 +1,6 @@
 ﻿using AddressAppServer.Web.ViewModels.Common;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Authorization;
 using System.ComponentModel;
 
 namespace AddressAppServer.Web.Components.Layout
@@ -9,11 +10,21 @@ namespace AddressAppServer.Web.Components.Layout
         [Inject]
         private UIStateViewModel _viewModel { get; set; }
 
-        private bool _drawerOpen = false;
+        [Inject]
+        private AuthenticationStateProvider AuthenticationStateProvider { get; set; }
 
-        protected override void OnInitialized()
+        [Inject]
+        private NavigationManager NavigationManager { get; set; }
+
+        private bool _drawerOpen = false;
+        private bool isAuthenticated;
+
+        protected override async Task OnInitializedAsync()
         {
             _viewModel.PropertyChanged += OnPropertyChanged;
+
+            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+            isAuthenticated = authState.User.Identity.IsAuthenticated;
         }
 
         private async void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
@@ -29,6 +40,16 @@ namespace AddressAppServer.Web.Components.Layout
         public void Dispose()
         {
             _viewModel.PropertyChanged -= OnPropertyChanged;
+        }
+
+        private void Login()
+        {
+            NavigationManager.NavigateTo("login");
+        }
+
+        private void Logout()
+        {
+            NavigationManager.NavigateTo("logout");
         }
     }
 }
