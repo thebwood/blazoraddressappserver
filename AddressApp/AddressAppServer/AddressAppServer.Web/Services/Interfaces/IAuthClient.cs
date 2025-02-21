@@ -5,7 +5,7 @@ namespace AddressAppServer.Web.Services.Interfaces
 {
     public interface IAuthClient
     {
-        Task<Result> LoginAsync(UserLoginModel loginModel);
+        Task<Result<string>> LoginAsync(UserLoginModel loginModel);
         Task LogoutAsync();
     }
 }

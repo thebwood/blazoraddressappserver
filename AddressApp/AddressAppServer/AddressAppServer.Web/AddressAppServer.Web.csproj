@@ -20,7 +20,6 @@
 
 	<ItemGroup>
 		<Folder Include="ViewModels\Addresses\" />
-		<Folder Include="ViewModels\Auth\" />
 		<Folder Include="ViewModels\Admin\" />
 	</ItemGroup>
 

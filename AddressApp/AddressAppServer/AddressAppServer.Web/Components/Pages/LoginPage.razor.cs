@@ -1,24 +1,34 @@
-﻿using AddressAppServer.ClassLibrary.Models;
+﻿using AddressAppServer.ClassLibrary.Common;
+using AddressAppServer.ClassLibrary.Models;
 using AddressAppServer.Web.BaseClasses;
 using AddressAppServer.Web.Services.Interfaces;
+using AddressAppServer.Web.ViewModels.Auth;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
+using System.Net;
 
 namespace AddressAppServer.Web.Components.Pages
 {
     public partial class LoginPage : CommonBase
     {
         private UserLoginModel loginModel = new UserLoginModel();
+        private EditContext _editContext;
 
         [Inject]
-        private IAuthClient AuthClient { get; set; }
+        private LoginViewModel _loginViewModel { get; set; }
+        protected override void OnInitialized()
+        {
+            _editContext = new(loginModel);
+        }
 
         private async Task HandleLogin()
         {
-            var result = await AuthClient.LoginAsync(loginModel);
+            Result<string>? result = await _loginViewModel.LoginAsync(loginModel);
 
             if (result.Success)
             {
+                Snackbar.Add("Login successful.", Severity.Success);
                 // If successful, navigate to the home page
                 NavigationManager.NavigateTo("/");
             }

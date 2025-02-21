@@ -2,6 +2,7 @@
 using AddressAppServer.Web.Services;
 using AddressAppServer.Web.Services.Interfaces;
 using AddressAppServer.Web.ViewModels.Addresses;
+using AddressAppServer.Web.ViewModels.Auth;
 using AddressAppServer.Web.ViewModels.Common;
 using Microsoft.Extensions.Options;
 using Polly;
@@ -37,6 +38,7 @@ namespace AddressAppServer.Web.Extensions
                 .AddPolicyHandler(retryPolicy); // Attach the retry policy
 
             services.AddSingleton<UIStateViewModel>();
+            services.AddTransient<LoginViewModel>();
             services.AddTransient<AddressesViewModel>();
             services.AddTransient<AddressDetailViewModel>();
 

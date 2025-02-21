@@ -1,7 +1,10 @@
 ﻿using AddressAppServer.ClassLibrary.Common;
+using AddressAppServer.ClassLibrary.DTOs;
 using AddressAppServer.ClassLibrary.Models;
 using AddressAppServer.Web.Services.Interfaces;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
+using System.Text.Json;
+using System.Text;
 
 namespace AddressAppServer.Web.Services
 {
@@ -18,22 +21,28 @@ namespace AddressAppServer.Web.Services
             _protectedSessionStorage = protectedSessionStorage;
         }
 
-        public async Task<Result> LoginAsync(UserLoginModel loginModel)
+        public async Task<Result<string>> LoginAsync(UserLoginModel loginModel)
         {
-            var response = await _httpClient.PostAsJsonAsync("api/auth/login", loginModel);
+            Result<string> result = new Result<string>();
+            UserLoginRequestDTO loginRequest = new UserLoginRequestDTO
+            {
+                UserName = loginModel.Username,
+                Password = loginModel.Password
+            };
+            string jsonPayload = JsonSerializer.Serialize(loginRequest);
+            StringContent? requestContent = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
 
-            if (response.IsSuccessStatusCode)
+            using HttpResponseMessage response = await _httpClient.PostAsync("api/auth/login", requestContent);
+            string? content = await response.Content.ReadAsStringAsync();
+            result = JsonSerializer.Deserialize<Result<string>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new();
+
+            if (result.Success)
             {
-                var token = await response.Content.ReadAsStringAsync();
-                await _protectedSessionStorage.SetAsync("authToken", token);
-                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
-                return new Result { Token = token, StatusCode = response.StatusCode };
+                await _protectedSessionStorage.SetAsync("authToken", result.Value);
+                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", result.Value);
+                
             }
-            else
-            {
-                var error = await response.Content.ReadFromJsonAsync<Error>();
-                return new Result { Message = error.Name, StatusCode = response.StatusCode, Errors = new List<Error> { error } };
-            }
+            return result;
         }
 
         public async Task LogoutAsync()
