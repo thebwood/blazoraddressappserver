@@ -38,9 +38,7 @@ namespace AddressAppServer.Web.Services
 
             if (result.Success)
             {
-                await _protectedSessionStorage.SetAsync("authToken", result.Value);
-                _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", result.Value);
-                
+                await _protectedSessionStorage.SetAsync("authToken", result.Value);                
             }
             return result;
         }
