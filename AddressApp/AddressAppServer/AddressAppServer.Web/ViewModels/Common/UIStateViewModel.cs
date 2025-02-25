@@ -5,12 +5,6 @@ namespace AddressAppServer.Web.ViewModels.Common
 {
     public class UIStateViewModel : INotifyPropertyChanged
     {
-        //private readonly IAuthClient _authClient;
-
-        //public UIStateViewModel(IAuthClient authClient)
-        //{
-        //    _authClient = authClient;
-        //}
 
         private bool _isLoading = false;
         public bool IsLoading
@@ -21,11 +15,6 @@ namespace AddressAppServer.Web.ViewModels.Common
                 _isLoading = value;
                 OnPropertyChanged(nameof(IsLoading));
             }
-        }
-
-        public async Task LogoutAsync()
-        {
-            //await _authClient.LogoutAsync();
         }
 
         public event PropertyChangedEventHandler PropertyChanged;

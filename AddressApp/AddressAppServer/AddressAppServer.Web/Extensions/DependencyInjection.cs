@@ -37,11 +37,14 @@ namespace AddressAppServer.Web.Extensions
 
             })
                 .AddPolicyHandler(retryPolicy); // Attach the retry policy
-            services.AddScoped<ProtectedSessionStorage>();
+
+            services.AddTransient<ProtectedSessionStorage>();
             services.AddSingleton<UIStateViewModel>();
             services.AddTransient<LoginViewModel>();
             services.AddTransient<AddressesViewModel>();
             services.AddTransient<AddressDetailViewModel>();
+            services.AddTransient<LogoutViewModel>();
+
 
             services.AddAuthorization();
             services.AddCascadingAuthenticationState();

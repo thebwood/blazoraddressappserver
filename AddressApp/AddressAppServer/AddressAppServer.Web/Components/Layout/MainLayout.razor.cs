@@ -35,19 +35,5 @@ namespace AddressAppServer.Web.Components.Layout
             _viewModel.PropertyChanged -= OnPropertyChanged;
         }
 
-        private async Task Logout()
-        {
-            //try
-            //{
-            //    _viewModel.IsLoading = true;
-            //    await _viewModel.LogoutAsync();
-            //    NavigationManager.NavigateTo("/Login");
-            //}
-            //finally
-            //{
-            //    _viewModel.IsLoading = false;
-            //}
-
-        }
     }
 }
