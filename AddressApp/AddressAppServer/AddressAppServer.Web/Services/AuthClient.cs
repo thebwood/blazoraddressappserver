@@ -21,9 +21,9 @@ namespace AddressAppServer.Web.Services
             _protectedSessionStorage = protectedSessionStorage;
         }
 
-        public async Task<Result<string>> LoginAsync(UserLoginModel loginModel)
+        public async Task<Result> LoginAsync(UserLoginModel loginModel)
         {
-            Result<string> result = new Result<string>();
+            Result result = new ();
             UserLoginRequestDTO loginRequest = new UserLoginRequestDTO
             {
                 UserName = loginModel.Username,
@@ -34,11 +34,12 @@ namespace AddressAppServer.Web.Services
 
             using HttpResponseMessage response = await _httpClient.PostAsync("api/auth/login", requestContent);
             string? content = await response.Content.ReadAsStringAsync();
-            result = JsonSerializer.Deserialize<Result<string>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new();
+            result = JsonSerializer.Deserialize<Result>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new();
 
             if (result.Success)
             {
-                await _protectedSessionStorage.SetAsync("authToken", result.Value);                
+                await _protectedSessionStorage.SetAsync("authToken", result.Token);
+                await _protectedSessionStorage.SetAsync("refreshToken", result.RefreshToken);
             }
             return result;
         }
@@ -47,6 +48,7 @@ namespace AddressAppServer.Web.Services
         {
             await _httpClient.PostAsync("api/auth/logout", null);
             await _protectedSessionStorage.DeleteAsync("authToken");
+            await _protectedSessionStorage.DeleteAsync("refreshToken");
             _httpClient.DefaultRequestHeaders.Authorization = null;
         }
     }

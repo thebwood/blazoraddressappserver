@@ -4,6 +4,7 @@ using AddressAppServer.Web.Services.Interfaces;
 using AddressAppServer.Web.ViewModels.Addresses;
 using AddressAppServer.Web.ViewModels.Auth;
 using AddressAppServer.Web.ViewModels.Common;
+using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.Extensions.Options;
 using Polly;
 using Polly.Extensions.Http;
@@ -36,11 +37,14 @@ namespace AddressAppServer.Web.Extensions
 
             })
                 .AddPolicyHandler(retryPolicy); // Attach the retry policy
-
+            services.AddScoped<ProtectedSessionStorage>();
             services.AddSingleton<UIStateViewModel>();
             services.AddTransient<LoginViewModel>();
             services.AddTransient<AddressesViewModel>();
             services.AddTransient<AddressDetailViewModel>();
+
+            services.AddAuthorization();
+            services.AddCascadingAuthenticationState();
 
             return services;
         }

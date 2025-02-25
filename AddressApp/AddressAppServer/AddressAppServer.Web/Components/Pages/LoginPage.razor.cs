@@ -1,12 +1,11 @@
 ﻿using AddressAppServer.ClassLibrary.Common;
 using AddressAppServer.ClassLibrary.Models;
 using AddressAppServer.Web.BaseClasses;
-using AddressAppServer.Web.Services.Interfaces;
 using AddressAppServer.Web.ViewModels.Auth;
+using AddressAppServer.Web.ViewModels.Common;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Forms;
 using MudBlazor;
-using System.Net;
 
 namespace AddressAppServer.Web.Components.Pages
 {
@@ -17,6 +16,11 @@ namespace AddressAppServer.Web.Components.Pages
 
         [Inject]
         private LoginViewModel _loginViewModel { get; set; }
+
+        [Inject]
+        private UIStateViewModel _stateViewModel { get; set; }
+
+
         protected override void OnInitialized()
         {
             _editContext = new(loginModel);
@@ -24,18 +28,27 @@ namespace AddressAppServer.Web.Components.Pages
 
         private async Task HandleLogin()
         {
-            Result<string>? result = await _loginViewModel.LoginAsync(loginModel);
+            Result? result;
+            try
+            {
+                _stateViewModel.IsLoading = true;
+                result = await _loginViewModel.LoginAsync(loginModel);
 
-            if (result.Success)
-            {
-                Snackbar.Add("Login successful.", Severity.Success);
-                // If successful, navigate to the home page
-                NavigationManager.NavigateTo("/");
+                if (result.Success)
+                {
+                    Snackbar.Add("Login successful.", Severity.Success);
+                    // If successful, navigate to the home page
+                    NavigationManager.NavigateTo("/");
+                }
+                else
+                {
+                    // Show an error message
+                    Snackbar.Add("Login failed. Please check your credentials and try again.", Severity.Error);
+                }
             }
-            else
+            finally
             {
-                // Show an error message
-                Snackbar.Add("Login failed. Please check your credentials and try again.", Severity.Error);
+                _stateViewModel.IsLoading = false;
             }
         }
     }

@@ -14,9 +14,9 @@ namespace AddressAppServer.Web.ViewModels.Auth
             _authClient = authClient;
         }
 
-        public async Task<Result<string>> LoginAsync(UserLoginModel loginModel)
+        public async Task<Result> LoginAsync(UserLoginModel loginModel)
         {
-            Result<string>? result = await _authClient.LoginAsync(loginModel);
+            Result? result = await _authClient.LoginAsync(loginModel);
 
             return result;
         }
