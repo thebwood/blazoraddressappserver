@@ -29,7 +29,6 @@ if (string.IsNullOrEmpty(baseAddress))
 }
 
 builder.Services.AddPresentation(baseAddress);
-
 // Add authentication services
 builder.Services.AddAuthentication(options =>
 {
@@ -44,6 +43,10 @@ builder.Services.AddAuthentication(options =>
     // Configure other options as needed
 });
 
+builder.Services.AddAuthorization();
+
+
+
 builder.Host.UseSerilog((context, services, configuration) =>
 {
     configuration.ReadFrom.Configuration(context.Configuration);
@@ -55,6 +58,7 @@ builder.Services.AddLogging(loggingBuilder =>
 });
 
 var app = builder.Build();
+
 app.UseMiddleware<GlobalExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
