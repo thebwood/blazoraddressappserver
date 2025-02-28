@@ -23,6 +23,14 @@ namespace AddressAppServer.Web.Components.Layout
             await InvokeAsync(StateHasChanged);
         }
 
+        private void GoToHome()
+        {
+            NavigationManager.NavigateTo("/");
+        }
+        private void GoToLogin()
+        {
+            NavigationManager.NavigateTo("/login");
+        }
         public void Dispose()
         {
             _viewModel.PropertyChanged -= OnPropertyChanged;

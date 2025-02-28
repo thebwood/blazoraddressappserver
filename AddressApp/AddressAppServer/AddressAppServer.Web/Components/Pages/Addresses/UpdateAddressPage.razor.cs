@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace AddressAppServer.Web.Components.Pages.Addresses
 {
-    public partial class UpdateAddressPage : CommonBase
+    public partial class UpdateAddressPage : ProtectedPageBase
     {
         [Parameter]
         public Guid AddressId { get; set; }
@@ -19,6 +19,7 @@ namespace AddressAppServer.Web.Components.Pages.Addresses
 
         protected override async Task OnInitializedAsync()
         {
+            base.OnInitialized();
             try
             {
                 _addressViewModel.IsNew = false;

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Components;
 
 namespace AddressAppServer.Web.Components.Pages.Addresses
 {
-    public partial class CreateAddressPage : CommonBase
+    public partial class CreateAddressPage : ProtectedPageBase
     {
         [Inject]
         private AddressDetailViewModel _addressViewModel { get; set; }
@@ -17,6 +17,7 @@ namespace AddressAppServer.Web.Components.Pages.Addresses
 
         protected override void OnInitialized()
         {
+            base.OnInitialized();
             try
             {
                 _addressViewModel.IsNew = true;

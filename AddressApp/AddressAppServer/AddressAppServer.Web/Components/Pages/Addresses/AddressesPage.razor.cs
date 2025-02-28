@@ -7,7 +7,7 @@ using MudBlazor;
 
 namespace AddressAppServer.Web.Components.Pages.Addresses
 {
-    public partial class AddressesPage : CommonBase, IDisposable
+    public partial class AddressesPage : ProtectedPageBase, IDisposable
     {
         [Inject]
         private AddressesViewModel AddressesViewModel { get; set; }
@@ -19,6 +19,7 @@ namespace AddressAppServer.Web.Components.Pages.Addresses
 
         protected override async Task OnInitializedAsync()
         {
+            base.OnInitialized();
             AddressesViewModel.OnAddressesDeleted += AddressesDeleted;
 
             try

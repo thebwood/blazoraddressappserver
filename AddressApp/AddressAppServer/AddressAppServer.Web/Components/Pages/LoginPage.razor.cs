@@ -37,8 +37,8 @@ namespace AddressAppServer.Web.Components.Pages
                 if (result.Success)
                 {
                     Snackbar.Add("Login successful.", Severity.Success);
-                    // If successful, navigate to the home page
-                    NavigationManager.NavigateTo("/");
+                    // If successful, navigate to the dashboard
+                    NavigationManager.NavigateTo("/dashboard");
                 }
                 else
                 {
