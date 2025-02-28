@@ -41,9 +41,7 @@ namespace AddressAppServer.Web.Services
 
             if (result.Success)
             {
-                await _protectedSessionStorage.SetAsync("authToken", result.Token);
-                await _protectedSessionStorage.SetAsync("refreshToken", result.RefreshToken);
-                await _authStateProvider.MarkUserAsAuthenticated(result.Token);
+                await _authStateProvider.MarkUserAsAuthenticated(result.Token, result.RefreshToken);
 
             }
             return result;

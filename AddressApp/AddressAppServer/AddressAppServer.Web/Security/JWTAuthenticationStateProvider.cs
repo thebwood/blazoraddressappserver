@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net.Http.Headers;
 using System.Security.Claims;
 
 namespace AddressAppServer.Web.Security
@@ -35,9 +36,10 @@ namespace AddressAppServer.Web.Security
             return new AuthenticationState(user);
         }
 
-        public async Task MarkUserAsAuthenticated(string token)
+        public async Task MarkUserAsAuthenticated(string token, string refreshToken)
         {
             await _sessionStorage.SetAsync("accessToken", token);
+            await _sessionStorage.SetAsync("refreshToken", refreshToken);
             var user = new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt"));
 
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
@@ -49,6 +51,17 @@ namespace AddressAppServer.Web.Security
             await _sessionStorage.DeleteAsync("refreshToken");
 
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(_anonymous)));
+        }
+
+        public async Task<bool> SetAuthorizationHeaderAsync(HttpClient httpClient)
+        {
+            var tokenResult = await _sessionStorage.GetAsync<string>("accessToken");
+            if (tokenResult.Success && tokenResult.Value != null)
+            {
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenResult.Value);
+                return true;
+            }
+            return false;
         }
 
         private static bool IsTokenExpired(string token)
