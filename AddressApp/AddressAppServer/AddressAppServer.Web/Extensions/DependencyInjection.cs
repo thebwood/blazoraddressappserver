@@ -49,8 +49,6 @@ namespace AddressAppServer.Web.Extensions
             services.AddTransient<LogoutViewModel>();
 
 
-            services.AddAuthentication();
-            services.AddAuthorization();
             services.AddCascadingAuthenticationState();
 
             return services;
