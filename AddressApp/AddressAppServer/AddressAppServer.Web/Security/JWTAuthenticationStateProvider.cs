@@ -1,10 +1,8 @@
-﻿using AddressAppServer.ClassLibrary.Common;
-using Microsoft.AspNetCore.Components.Authorization;
+﻿using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
-using System.IdentityModel.Tokens.Jwt;
+using Microsoft.IdentityModel.JsonWebTokens;
 using System.Net.Http.Headers;
 using System.Security.Claims;
-
 namespace AddressAppServer.Web.Security
 {
     public class JWTAuthenticationStateProvider : AuthenticationStateProvider
@@ -66,14 +64,14 @@ namespace AddressAppServer.Web.Security
 
         private static bool IsTokenExpired(string token)
         {
-            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+            var jwt = new JsonWebTokenHandler().ReadJsonWebToken(token);
             return jwt.ValidTo < DateTime.UtcNow;
         }
 
         private static IEnumerable<Claim> ParseClaimsFromJwt(string token)
         {
-            var jwtHandler = new JwtSecurityTokenHandler();
-            var jwtToken = jwtHandler.ReadJwtToken(token);
+            var jwtHandler = new JsonWebTokenHandler();
+            var jwtToken = jwtHandler.ReadJsonWebToken(token);
 
             return jwtToken.Claims;
         }
