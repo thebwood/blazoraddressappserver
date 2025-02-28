@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer; // Add this using directive
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using AddressAppServer.Web.Common;
 using AddressAppServer.Web.Components;
 using AddressAppServer.Web.Extensions;
@@ -38,8 +38,9 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-    options.Authority = "https://your-auth-server";
-    options.Audience = "your-api-audience";
+    options.Authority = "http://localhost:5025"; // Use HTTP for development
+    options.Audience = "http://localhost:5025"; // Replace with your actual audience
+    options.RequireHttpsMetadata = false; // Allow HTTP for development
     // Configure other options as needed
 });
 
