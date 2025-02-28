@@ -1,5 +1,6 @@
 ﻿@inherits ProtectedPageBase
 @using AddressAppServer.Web.Components.Pages.Addresses.Common
 @page "/addresses/{AddressId:guid}"
+@attribute [Authorize]
 
 <AddressDetailComponent AddressesViewModel="_addressViewModel"/>

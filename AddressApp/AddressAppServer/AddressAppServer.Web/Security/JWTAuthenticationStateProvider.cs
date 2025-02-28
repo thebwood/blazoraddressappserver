@@ -8,36 +8,61 @@ namespace AddressAppServer.Web.Security
 {
     public class JWTAuthenticationStateProvider : AuthenticationStateProvider
     {
-        private readonly ProtectedSessionStorage _protectedSessionStorage;
+        private readonly ProtectedSessionStorage _sessionStorage;
+        private ClaimsPrincipal _anonymous = new ClaimsPrincipal(new ClaimsIdentity());
 
-        public JWTAuthenticationStateProvider(ProtectedSessionStorage protectedSessionStorage)
+        public JWTAuthenticationStateProvider(ProtectedSessionStorage sessionStorage)
         {
-            _protectedSessionStorage = protectedSessionStorage;
+            _sessionStorage = sessionStorage;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            ProtectedBrowserStorageResult<string> token = await _protectedSessionStorage.GetAsync<string>("authToken");
-            ProtectedBrowserStorageResult<string> refreshToken = await _protectedSessionStorage.GetAsync<string>("refreshToken");
+            var tokenResult = await _sessionStorage.GetAsync<string>("accessToken");
 
-            if (string.IsNullOrEmpty(token.Value))
+            if (!tokenResult.Success || string.IsNullOrEmpty(tokenResult.Value))
             {
-                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+                return new AuthenticationState(_anonymous);
             }
 
-            var handler = new JwtSecurityTokenHandler();
-            var jwtToken = handler.ReadJwtToken(token.Value);
-
-            if (jwtToken == null || jwtToken.ValidTo < DateTime.UtcNow)
+            var token = tokenResult.Value;
+            if (IsTokenExpired(token))
             {
-                return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity()));
+                return new AuthenticationState(_anonymous);
             }
 
-            var claims = jwtToken.Claims;
-            var identity = new ClaimsIdentity(claims, "jwt");
-            var user = new ClaimsPrincipal(identity);
-
+            var user = new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt"));
             return new AuthenticationState(user);
+        }
+
+        public async Task MarkUserAsAuthenticated(string token)
+        {
+            await _sessionStorage.SetAsync("accessToken", token);
+            var user = new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt"));
+
+            NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
+        }
+
+        public async Task MarkUserAsLoggedOut()
+        {
+            await _sessionStorage.DeleteAsync("accessToken");
+            await _sessionStorage.DeleteAsync("refreshToken");
+
+            NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(_anonymous)));
+        }
+
+        private static bool IsTokenExpired(string token)
+        {
+            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(token);
+            return jwt.ValidTo < DateTime.UtcNow;
+        }
+
+        private static IEnumerable<Claim> ParseClaimsFromJwt(string token)
+        {
+            var jwtHandler = new JwtSecurityTokenHandler();
+            var jwtToken = jwtHandler.ReadJwtToken(token);
+
+            return jwtToken.Claims;
         }
     }
 }

@@ -1,11 +1,10 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer; // Add this using directive
 using AddressAppServer.Web.Common;
 using AddressAppServer.Web.Components;
 using AddressAppServer.Web.Extensions;
 using AddressAppServer.Web.Middlewares;
 using MudBlazor.Services;
 using Serilog;
-
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +29,19 @@ if (string.IsNullOrEmpty(baseAddress))
 }
 
 builder.Services.AddPresentation(baseAddress);
+
+// Add authentication services
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.Authority = "https://your-auth-server";
+    options.Audience = "your-api-audience";
+    // Configure other options as needed
+});
 
 builder.Host.UseSerilog((context, services, configuration) =>
 {
@@ -56,6 +68,10 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
+
+// Add authentication and authorization middleware
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();

@@ -1,9 +1,12 @@
 ﻿@inherits ProtectedPageBase
 @page "/dashboard"
+@attribute [Authorize]
 
-
-<h3>Dashboard</h3>
-
-@code {
-
-}
+<AuthorizeView>
+    <Authorized>
+        <h3>Welcome to the Dashboard</h3>
+    </Authorized>
+    <NotAuthorized>
+        <p>Redirecting...</p>
+    </NotAuthorized>
+</AuthorizeView>

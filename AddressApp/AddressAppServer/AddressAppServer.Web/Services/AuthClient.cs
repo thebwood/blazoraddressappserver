@@ -5,18 +5,21 @@ using AddressAppServer.Web.Services.Interfaces;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using System.Text.Json;
 using System.Text;
+using AddressAppServer.Web.Security;
 
 namespace AddressAppServer.Web.Services
 {
     public class AuthClient : IAuthClient
     {
         private readonly HttpClient _httpClient;
+        private readonly JWTAuthenticationStateProvider _authStateProvider;
         private readonly IConfiguration _configuration;
         private readonly ProtectedSessionStorage _protectedSessionStorage;
 
-        public AuthClient(HttpClient httpClient, IConfiguration configuration, ProtectedSessionStorage protectedSessionStorage)
+        public AuthClient(HttpClient httpClient, JWTAuthenticationStateProvider authStateProver, IConfiguration configuration, ProtectedSessionStorage protectedSessionStorage)
         {
             _httpClient = httpClient;
+            _authStateProvider = authStateProver;
             _configuration = configuration;
             _protectedSessionStorage = protectedSessionStorage;
         }
@@ -40,6 +43,8 @@ namespace AddressAppServer.Web.Services
             {
                 await _protectedSessionStorage.SetAsync("authToken", result.Token);
                 await _protectedSessionStorage.SetAsync("refreshToken", result.RefreshToken);
+                await _authStateProvider.MarkUserAsAuthenticated(result.Token);
+
             }
             return result;
         }
@@ -47,9 +52,8 @@ namespace AddressAppServer.Web.Services
         public async Task LogoutAsync()
         {
             await _httpClient.PostAsync("api/auth/logout", null);
-            await _protectedSessionStorage.DeleteAsync("authToken");
-            await _protectedSessionStorage.DeleteAsync("refreshToken");
             _httpClient.DefaultRequestHeaders.Authorization = null;
+            await _authStateProvider.MarkUserAsLoggedOut();
         }
     }
 }
