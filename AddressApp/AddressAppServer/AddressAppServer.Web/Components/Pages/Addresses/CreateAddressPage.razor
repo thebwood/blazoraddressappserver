@@ -3,4 +3,11 @@
 @page "/addresses/create"
 @attribute [Authorize]
 
-<AddressDetailComponent AddressesViewModel="_addressViewModel"/>
+<AuthorizeView>
+    <Authorized>
+        <AddressDetailComponent AddressesViewModel="_addressViewModel" />
+    </Authorized>
+    <NotAuthorized>
+        <p>Redirecting...</p>
+    </NotAuthorized>
+</AuthorizeView>

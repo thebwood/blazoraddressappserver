@@ -3,10 +3,17 @@
 @page "/addresses"
 @attribute [Authorize]
 
-<h3>Addresses</h3>
+<AuthorizeView>
+    <Authorized>
+        <h3>Addresses</h3>
 
-<div class="mb-2 mt-2">
-    <MudButton OnClick="CreateAddress" Class="bg-primary text-white">Create Address</MudButton>
-</div>
+        <div class="mb-2 mt-2">
+            <MudButton OnClick="CreateAddress" Class="bg-primary text-white">Create Address</MudButton>
+        </div>
 
-<AddressGridComponent AddressesViewModel="AddressesViewModel" />
+        <AddressGridComponent AddressesViewModel="AddressesViewModel" />
+    </Authorized>
+    <NotAuthorized>
+        <p>Redirecting...</p>
+    </NotAuthorized>
+</AuthorizeView>

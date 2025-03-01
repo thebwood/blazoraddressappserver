@@ -2,8 +2,12 @@
 
 @page "/admin/permissions"
 @attribute [Authorize]
-<h3>PermissionsPage</h3>
 
-@code {
-
-}
+<AuthorizeView>
+    <Authorized>
+        <h3>Permissions</h3>
+    </Authorized>
+    <NotAuthorized>
+        <p>Redirecting...</p>
+    </NotAuthorized>
+</AuthorizeView>
