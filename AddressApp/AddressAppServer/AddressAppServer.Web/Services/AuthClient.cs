@@ -24,9 +24,9 @@ namespace AddressAppServer.Web.Services
             _protectedSessionStorage = protectedSessionStorage;
         }
 
-        public async Task<Result> LoginAsync(UserLoginModel loginModel)
+        public async Task<Result<UserLoginResponseDTO>> LoginAsync(UserLoginModel loginModel)
         {
-            Result result = new ();
+            Result<UserLoginResponseDTO> result = new ();
             UserLoginRequestDTO loginRequest = new UserLoginRequestDTO
             {
                 UserName = loginModel.Username,
@@ -37,11 +37,11 @@ namespace AddressAppServer.Web.Services
 
             using HttpResponseMessage response = await _httpClient.PostAsync("api/auth/login", requestContent);
             string? content = await response.Content.ReadAsStringAsync();
-            result = JsonSerializer.Deserialize<Result>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new();
+            result = JsonSerializer.Deserialize<Result<UserLoginResponseDTO>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new();
 
             if (result.Success)
             {
-                await _authStateProvider.MarkUserAsAuthenticated(result.Token, result.RefreshToken);
+                await _authStateProvider.MarkUserAsAuthenticated(result.Value.Token, result.Value.RefreshToken);
 
             }
             return result;
