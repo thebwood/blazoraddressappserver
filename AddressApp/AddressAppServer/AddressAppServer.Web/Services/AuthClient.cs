@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using System.Text.Json;
 using System.Text;
 using AddressAppServer.Web.Security;
+using System.Net;
 
 namespace AddressAppServer.Web.Services
 {
@@ -26,7 +27,7 @@ namespace AddressAppServer.Web.Services
 
         public async Task<Result> LoginAsync(UserLoginModel loginModel)
         {
-            Result result = new ();
+            Result result = new();
             UserLoginRequestDTO loginRequest = new UserLoginRequestDTO
             {
                 UserName = loginModel.Username,
@@ -42,7 +43,6 @@ namespace AddressAppServer.Web.Services
             if (result.Success)
             {
                 await _authStateProvider.MarkUserAsAuthenticated(result.Token, result.RefreshToken);
-
             }
             return result;
         }
@@ -52,6 +52,33 @@ namespace AddressAppServer.Web.Services
             await _httpClient.PostAsync("api/auth/logout", null);
             _httpClient.DefaultRequestHeaders.Authorization = null;
             await _authStateProvider.MarkUserAsLoggedOut();
+        }
+
+        public async Task<Result> RefreshTokenAsync(string refreshToken)
+        {
+            var refreshRequest = new RefreshUserTokenRequestDTO
+            {
+                User = new UserDTO(),
+                RefreshToken = refreshToken
+            };
+
+            string jsonPayload = JsonSerializer.Serialize(refreshRequest);
+            StringContent? requestContent = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+            using HttpResponseMessage response = await _httpClient.PostAsync("api/auth/refresh", requestContent);
+            string? content = await response.Content.ReadAsStringAsync();
+            var result = JsonSerializer.Deserialize<Result>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new();
+
+            if (result.Success)
+            {
+                await _authStateProvider.MarkUserAsAuthenticated(result.Token, result.RefreshToken);
+            }
+            else
+            {
+                await _authStateProvider.MarkUserAsLoggedOut();
+            }
+
+            return result;
         }
     }
 }

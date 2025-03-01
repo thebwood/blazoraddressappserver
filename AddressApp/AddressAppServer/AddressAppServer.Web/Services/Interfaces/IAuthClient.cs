@@ -7,5 +7,6 @@ namespace AddressAppServer.Web.Services.Interfaces
     {
         Task<Result> LoginAsync(UserLoginModel loginModel);
         Task LogoutAsync();
+        Task<Result> RefreshTokenAsync(string refreshToken);
     }
 }
