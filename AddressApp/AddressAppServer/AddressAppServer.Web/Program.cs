@@ -1,10 +1,12 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using AddressAppServer.Web.Common;
+using AddressAppServer.ClassLibrary.Common;
 using AddressAppServer.Web.Components;
 using AddressAppServer.Web.Extensions;
 using AddressAppServer.Web.Middlewares;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using MudBlazor.Services;
 using Serilog;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,7 +31,8 @@ if (string.IsNullOrEmpty(baseAddress))
 }
 
 builder.Services.AddPresentation(baseAddress);
-// Add authentication services
+
+// Configure JWT authentication
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -37,15 +40,20 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-    options.Authority = "http://localhost:5025"; // Use HTTP for development
-    options.Audience = "http://localhost:5025"; // Replace with your actual audience
-    options.RequireHttpsMetadata = false; // Allow HTTP for development
-    // Configure other options as needed
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = apiSettings.Issuer,
+        ValidAudience = apiSettings.Audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(apiSettings.Secret))
+    };
 });
 
+builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddAuthorization();
-
-
 
 builder.Host.UseSerilog((context, services, configuration) =>
 {

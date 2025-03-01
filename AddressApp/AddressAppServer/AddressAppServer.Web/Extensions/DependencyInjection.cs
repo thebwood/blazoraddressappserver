@@ -1,4 +1,4 @@
-﻿using AddressAppServer.Web.Common;
+﻿using AddressAppServer.ClassLibrary.Common;
 using AddressAppServer.Web.Security;
 using AddressAppServer.Web.Services;
 using AddressAppServer.Web.Services.Interfaces;
@@ -25,7 +25,8 @@ namespace AddressAppServer.Web.Extensions
                 .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(retryAttempt));
 
             // Add HttpClient with retry policy and exception handling
-            services.AddHttpClient<IAuthClient, AuthClient>((serviceProvider, client) => {
+            services.AddHttpClient<IAuthClient, AuthClient>((serviceProvider, client) =>
+            {
                 ApiSettings? apiSettings = serviceProvider.GetRequiredService<IOptions<ApiSettings>>().Value;
                 client.BaseAddress = new Uri(baseAddress);
 
@@ -33,7 +34,8 @@ namespace AddressAppServer.Web.Extensions
                 .AddPolicyHandler(retryPolicy); // Attach the retry policy
 
 
-            services.AddHttpClient<IAddressClient, AddressClient>((serviceProvider, client) => {
+            services.AddHttpClient<IAddressClient, AddressClient>((serviceProvider, client) =>
+            {
                 ApiSettings? apiSettings = serviceProvider.GetRequiredService<IOptions<ApiSettings>>().Value;
                 client.BaseAddress = new Uri(baseAddress);
 
@@ -47,9 +49,6 @@ namespace AddressAppServer.Web.Extensions
             services.AddTransient<AddressesViewModel>();
             services.AddTransient<AddressDetailViewModel>();
             services.AddTransient<LogoutViewModel>();
-
-
-            services.AddCascadingAuthenticationState();
 
             return services;
         }
