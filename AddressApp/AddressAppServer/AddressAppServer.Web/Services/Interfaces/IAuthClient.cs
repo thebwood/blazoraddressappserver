@@ -1,12 +1,13 @@
 ﻿using AddressAppServer.ClassLibrary.Common;
+using AddressAppServer.ClassLibrary.DTOs;
 using AddressAppServer.ClassLibrary.Models;
 
 namespace AddressAppServer.Web.Services.Interfaces
 {
     public interface IAuthClient
     {
-        Task<Result> LoginAsync(UserLoginModel loginModel);
+        Task<Result<UserLoginResponseDTO>> LoginAsync(UserLoginModel loginModel);
         Task LogoutAsync();
-        Task<Result> RefreshTokenAsync(string refreshToken);
+        Task<Result<RefreshUserTokenResponseDTO>> RefreshTokenAsync(UserDTO user, string refreshToken);
     }
 }
