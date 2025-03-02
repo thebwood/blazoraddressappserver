@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using System.Text.Json;
 using System.Text;
 using AddressAppServer.Web.Security;
-using System.Net;
 
 namespace AddressAppServer.Web.Services
 {
@@ -27,7 +26,11 @@ namespace AddressAppServer.Web.Services
 
         public async Task<Result<UserLoginResponseDTO>> LoginAsync(UserLoginModel loginModel)
         {
+<<<<<<< HEAD
             Result<UserLoginResponseDTO> result = new();
+=======
+            Result result = new ();
+>>>>>>> parent of 24950a0 (Working on the refresh token process)
             UserLoginRequestDTO loginRequest = new UserLoginRequestDTO
             {
                 UserName = loginModel.Username,
@@ -42,7 +45,12 @@ namespace AddressAppServer.Web.Services
 
             if (result.Success)
             {
+<<<<<<< HEAD
                 await _authStateProvider.MarkUserAsAuthenticated(result.Value.User, result.Value.Token, result.Value.RefreshToken);
+=======
+                await _authStateProvider.MarkUserAsAuthenticated(result.Token, result.RefreshToken);
+
+>>>>>>> parent of 24950a0 (Working on the refresh token process)
             }
             else
             {
@@ -58,6 +66,7 @@ namespace AddressAppServer.Web.Services
             _httpClient.DefaultRequestHeaders.Authorization = null;
             await _authStateProvider.MarkUserAsLoggedOut();
         }
+<<<<<<< HEAD
 
         public async Task<Result<RefreshUserTokenResponseDTO>> RefreshTokenAsync(UserDTO user, string refreshToken)
         {
@@ -85,5 +94,7 @@ namespace AddressAppServer.Web.Services
 
             return result;
         }
+=======
+>>>>>>> parent of 24950a0 (Working on the refresh token process)
     }
 }

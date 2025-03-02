@@ -8,6 +8,9 @@ namespace AddressAppServer.Web.Services.Interfaces
     {
         Task<Result<UserLoginResponseDTO>> LoginAsync(UserLoginModel loginModel);
         Task LogoutAsync();
+<<<<<<< HEAD
         Task<Result<RefreshUserTokenResponseDTO>> RefreshTokenAsync(UserDTO user, string refreshToken);
+=======
+>>>>>>> parent of 24950a0 (Working on the refresh token process)
     }
 }
