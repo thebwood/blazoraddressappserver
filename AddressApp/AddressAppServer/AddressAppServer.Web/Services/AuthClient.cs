@@ -58,5 +58,31 @@ namespace AddressAppServer.Web.Services
             await _authStateProvider.MarkUserAsLoggedOut();
         }
 
+        public async Task<Result<RefreshUserTokenResponseDTO>> RefreshTokenAsync(UserDTO user, string refreshToken)
+        {
+            RefreshUserTokenRequestDTO refreshRequest = new RefreshUserTokenRequestDTO
+            {
+                User = user,
+                RefreshToken = refreshToken
+            };
+
+            string jsonPayload = JsonSerializer.Serialize(refreshRequest);
+            StringContent requestContent = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+            using HttpResponseMessage response = await _httpClient.PostAsync("api/auth/refresh", requestContent);
+            string content = await response.Content.ReadAsStringAsync();
+            Result<RefreshUserTokenResponseDTO> result = JsonSerializer.Deserialize<Result<RefreshUserTokenResponseDTO>>(content, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }) ?? new();
+
+            if (result.Success)
+            {
+                await _authStateProvider.MarkUserAsAuthenticated(result.Value.User, result.Value.Token, result.Value.RefreshToken);
+            }
+            else
+            {
+                await _authStateProvider.MarkUserAsLoggedOut();
+            }
+
+            return result;
+        }
     }
 }

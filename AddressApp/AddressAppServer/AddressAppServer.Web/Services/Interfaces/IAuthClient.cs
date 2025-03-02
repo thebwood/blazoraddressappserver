@@ -8,5 +8,6 @@ namespace AddressAppServer.Web.Services.Interfaces
     {
         Task<Result<UserLoginResponseDTO>> LoginAsync(UserLoginModel loginModel);
         Task LogoutAsync();
+        Task<Result<RefreshUserTokenResponseDTO>> RefreshTokenAsync(UserDTO? value, string refreshToken);
     }
 }
