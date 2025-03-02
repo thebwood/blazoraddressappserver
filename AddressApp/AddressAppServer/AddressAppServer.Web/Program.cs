@@ -1,13 +1,11 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using AddressAppServer.Web.Common;
 using AddressAppServer.Web.Components;
 using AddressAppServer.Web.Extensions;
 using AddressAppServer.Web.Middlewares;
+using AddressAppServer.Web.Security;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using MudBlazor.Services;
 using Serilog;
-using AddressAppServer.Web.Security;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 
 var builder = WebApplication.CreateBuilder(args);
 
