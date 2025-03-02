@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
+﻿using AddressAppServer.ClassLibrary.DTOs;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.IdentityModel.JsonWebTokens;
 using System.Net.Http.Headers;
@@ -34,8 +35,9 @@ namespace AddressAppServer.Web.Security
             return new AuthenticationState(user);
         }
 
-        public async Task MarkUserAsAuthenticated(string token, string refreshToken)
+        public async Task MarkUserAsAuthenticated(UserDTO userDto, string token, string refreshToken)
         {
+            await _sessionStorage.SetAsync("user", userDto);
             await _sessionStorage.SetAsync("accessToken", token);
             await _sessionStorage.SetAsync("refreshToken", refreshToken);
             var user = new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt"));
@@ -45,6 +47,7 @@ namespace AddressAppServer.Web.Security
 
         public async Task MarkUserAsLoggedOut()
         {
+            await _sessionStorage.DeleteAsync("user");
             await _sessionStorage.DeleteAsync("accessToken");
             await _sessionStorage.DeleteAsync("refreshToken");
 
@@ -74,6 +77,16 @@ namespace AddressAppServer.Web.Security
             var jwtToken = jwtHandler.ReadJsonWebToken(token);
 
             return jwtToken.Claims;
+        }
+
+        public async Task<UserDTO> GetUserAsync()
+        {
+            var userResult = await _sessionStorage.GetAsync<UserDTO>("user");
+            if (userResult.Success && userResult.Value != null)
+            {
+                return userResult.Value;
+            }
+            return null;
         }
     }
 }
