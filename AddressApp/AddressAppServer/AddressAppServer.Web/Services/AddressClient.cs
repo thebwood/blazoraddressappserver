@@ -11,9 +11,9 @@ namespace AddressAppServer.Web.Services
     {
         private readonly HttpClient _httpClient;
         private readonly ILogger<AddressClient> _logger;
-        private readonly JWTAuthenticationStateProvider _authStateProvider;
+        private readonly AddressAuthenticationStateProvider _authStateProvider;
 
-        public AddressClient(HttpClient httpClient, ILogger<AddressClient> logger, JWTAuthenticationStateProvider authStateProvider)
+        public AddressClient(HttpClient httpClient, ILogger<AddressClient> logger, AddressAuthenticationStateProvider authStateProvider)
         {
             _httpClient = httpClient;
             _logger = logger;

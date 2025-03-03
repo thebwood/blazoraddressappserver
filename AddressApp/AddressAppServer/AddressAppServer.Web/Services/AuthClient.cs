@@ -13,11 +13,11 @@ namespace AddressAppServer.Web.Services
     public class AuthClient : IAuthClient
     {
         private readonly HttpClient _httpClient;
-        private readonly JWTAuthenticationStateProvider _authStateProvider;
+        private readonly AddressAuthenticationStateProvider _authStateProvider;
         private readonly IConfiguration _configuration;
         private readonly ProtectedSessionStorage _protectedSessionStorage;
 
-        public AuthClient(HttpClient httpClient, JWTAuthenticationStateProvider authStateProver, IConfiguration configuration, ProtectedSessionStorage protectedSessionStorage)
+        public AuthClient(HttpClient httpClient, AddressAuthenticationStateProvider authStateProver, IConfiguration configuration, ProtectedSessionStorage protectedSessionStorage)
         {
             _httpClient = httpClient;
             _authStateProvider = authStateProver;

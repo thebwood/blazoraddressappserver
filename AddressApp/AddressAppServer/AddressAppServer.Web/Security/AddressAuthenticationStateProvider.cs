@@ -7,13 +7,13 @@ using System.Net.Http.Headers;
 using System.Security.Claims;
 namespace AddressAppServer.Web.Security
 {
-    public class JWTAuthenticationStateProvider : AuthenticationStateProvider
+    public class AddressAuthenticationStateProvider : AuthenticationStateProvider
     {
         private readonly ProtectedSessionStorage _sessionStorage;
         private readonly NavigationManager _navigationManager;
         private ClaimsPrincipal _anonymous = new ClaimsPrincipal(new ClaimsIdentity());
 
-        public JWTAuthenticationStateProvider(ProtectedSessionStorage sessionStorage, NavigationManager navigationManager)
+        public AddressAuthenticationStateProvider(ProtectedSessionStorage sessionStorage, NavigationManager navigationManager)
         {
             _sessionStorage = sessionStorage;
             _navigationManager = navigationManager;

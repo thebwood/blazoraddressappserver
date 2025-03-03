@@ -9,7 +9,7 @@ namespace AddressAppServer.Web.BaseClasses
     public abstract class ProtectedPageBase : CommonBase
     {
         [Inject]
-        protected JWTAuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+        protected AddressAuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
         [Inject]
         protected IAuthClient AuthClient { get; set; } = default!;
 

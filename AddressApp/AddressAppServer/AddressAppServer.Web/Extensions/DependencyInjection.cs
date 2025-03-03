@@ -40,8 +40,8 @@ namespace AddressAppServer.Web.Extensions
             })
                 .AddPolicyHandler(retryPolicy); // Attach the retry policy
 
-            services.AddScoped<JWTAuthenticationStateProvider>();
-            services.AddScoped<AuthenticationStateProvider, JWTAuthenticationStateProvider>();
+            services.AddScoped<AddressAuthenticationStateProvider>();
+            services.AddScoped<AuthenticationStateProvider, AddressAuthenticationStateProvider>();
             services.AddTransient<ProtectedSessionStorage>();
             services.AddSingleton<UIStateViewModel>();
             services.AddTransient<LoginViewModel>();
