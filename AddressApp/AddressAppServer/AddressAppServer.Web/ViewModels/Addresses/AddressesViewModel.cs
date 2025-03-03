@@ -1,7 +1,7 @@
 ﻿using AddressAppServer.ClassLibrary.Common;
 using AddressAppServer.ClassLibrary.DTOs;
+using AddressAppServer.ClassLibrary.Mappers;
 using AddressAppServer.ClassLibrary.Models;
-using AddressAppServer.Web.Mappers;
 using AddressAppServer.Web.Services.Interfaces;
 
 namespace AddressAppServer.Web.ViewModels.Addresses

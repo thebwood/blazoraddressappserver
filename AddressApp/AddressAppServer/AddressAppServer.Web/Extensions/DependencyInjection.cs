@@ -3,6 +3,7 @@ using AddressAppServer.Web.Security;
 using AddressAppServer.Web.Services;
 using AddressAppServer.Web.Services.Interfaces;
 using AddressAppServer.Web.ViewModels.Addresses;
+using AddressAppServer.Web.ViewModels.Admin;
 using AddressAppServer.Web.ViewModels.Auth;
 using AddressAppServer.Web.ViewModels.Common;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -40,6 +41,13 @@ namespace AddressAppServer.Web.Extensions
             })
                 .AddPolicyHandler(retryPolicy); // Attach the retry policy
 
+            services.AddHttpClient<IAdminClient, AdminClient>((serviceProvider, client) => {
+                ApiSettings? apiSettings = serviceProvider.GetRequiredService<IOptions<ApiSettings>>().Value;
+                client.BaseAddress = new Uri(baseAddress);
+
+            })
+                .AddPolicyHandler(retryPolicy); // Attach the retry policy
+
             services.AddScoped<AddressAuthenticationStateProvider>();
             services.AddScoped<AuthenticationStateProvider, AddressAuthenticationStateProvider>();
             services.AddTransient<ProtectedSessionStorage>();
@@ -47,8 +55,9 @@ namespace AddressAppServer.Web.Extensions
             services.AddTransient<LoginViewModel>();
             services.AddTransient<AddressesViewModel>();
             services.AddTransient<AddressDetailViewModel>();
+            services.AddTransient<UsersViewModel>();
             services.AddTransient<LogoutViewModel>();
-
+            
             services.AddCascadingAuthenticationState();
 
             return services;

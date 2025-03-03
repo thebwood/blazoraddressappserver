@@ -1,7 +1,7 @@
 ﻿using AddressAppServer.ClassLibrary.DTOs;
 using AddressAppServer.ClassLibrary.Models;
 
-namespace AddressAppServer.Web.Mappers
+namespace AddressAppServer.ClassLibrary.Mappers
 {
     public static class AddressMapper
     {

@@ -1,10 +1,13 @@
 ﻿@inherits ProtectedPageBase
 @page "/admin/users"
+@using AddressAppServer.Web.Components.Pages.Admin.Common
 @attribute [Authorize]
+
 
 <AuthorizeView>
     <Authorized>
         <h3>Users</h3>
+        <UserGridComponent UsersViewModel="UsersViewModel" />
     </Authorized>
     <NotAuthorized>
         <p>Redirecting...</p>
