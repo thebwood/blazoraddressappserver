@@ -69,13 +69,31 @@ namespace AddressAppServer.Web.Security
             return false;
         }
 
+        public async Task<string?> GetAccessTokenAsync()
+        {
+            var tokenResult = await _sessionStorage.GetAsync<string>("accessToken");
+            return tokenResult.Success ? tokenResult.Value : null;
+        }
+
+        public async Task<string?> GetRefreshTokenAsync()
+        {
+            var tokenResult = await _sessionStorage.GetAsync<string>("refreshToken");
+            return tokenResult.Success ? tokenResult.Value : null;
+        }
+
+        public async Task<UserDTO?> GetUserAsync()
+        {
+            var userResult = await _sessionStorage.GetAsync<UserDTO>("user");
+            return userResult.Success ? userResult.Value : null;
+        }
+
         private static bool IsTokenExpired(string token)
         {
             var jwt = new JsonWebTokenHandler().ReadJsonWebToken(token);
             return jwt.ValidTo < DateTime.UtcNow;
         }
 
-        private static IEnumerable<Claim> ParseClaimsFromJwt(string token)
+        public static IEnumerable<Claim> ParseClaimsFromJwt(string token)
         {
             var jwtHandler = new JsonWebTokenHandler();
             var jwtToken = jwtHandler.ReadJsonWebToken(token);
