@@ -22,13 +22,26 @@ if (apiSettings == null)
 }
 
 string? baseAddress = apiSettings.BaseUrl;
+string? authority = apiSettings.Authority;
+string? audience = apiSettings.Audience;
 
 if (string.IsNullOrEmpty(baseAddress))
 {
     throw new ArgumentNullException(nameof(baseAddress), "Base address for API is not configured.");
 }
 
+if (string.IsNullOrEmpty(authority))
+{
+    throw new ArgumentNullException(nameof(authority), "Authority for API is not configured.");
+}
+
+if (string.IsNullOrEmpty(audience))
+{
+    throw new ArgumentNullException(nameof(audience), "Audience for API is not configured.");
+}
+
 builder.Services.AddPresentation(baseAddress);
+
 // Add authentication services
 builder.Services.AddAuthentication(options =>
 {
@@ -37,15 +50,14 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
-    options.Authority = "http://localhost:5025"; // Use HTTP for development
-    options.Audience = "http://localhost:5025"; // Replace with your actual audience
+    options.UseSecurityTokenValidators = true;
+    options.Authority = authority;
+    options.Audience = audience;
     options.RequireHttpsMetadata = false; // Allow HTTP for development
     // Configure other options as needed
 });
 
 builder.Services.AddAuthorization();
-
-
 
 builder.Host.UseSerilog((context, services, configuration) =>
 {

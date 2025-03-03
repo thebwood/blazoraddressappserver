@@ -23,11 +23,6 @@ namespace AddressAppServer.Web.ViewModels.Addresses
                 List<AddressModel> addressViewModels = result.Value.AddressList.Select(dto => AddressMapper.MapToAddressModel(dto)).ToList();
                 AddressesLoaded(addressViewModels);
             }
-            else
-            {
-                // Handle errors (e.g., log the error, show a message to the user, etc.)
-                Console.WriteLine($"Error fetching addresses: {result.Message}");
-            }
         }
 
         public async Task DeleteAddress(Guid id)

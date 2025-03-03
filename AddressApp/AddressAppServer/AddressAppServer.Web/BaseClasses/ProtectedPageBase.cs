@@ -12,11 +12,22 @@ namespace AddressAppServer.Web.BaseClasses
         protected AddressAuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
         [Inject]
         protected IAuthClient AuthClient { get; set; } = default!;
+        [Inject]
+        protected ILogger<ProtectedPageBase> Logger { get; set; } = default!;
 
         protected ClaimsPrincipal? User { get; private set; }
 
         protected override async Task OnInitializedAsync()
         {
+            Logger.LogInformation("OnInitializedAsync called");
+
+            if (AuthenticationStateProvider == null || AuthClient == null)
+            {
+                Logger.LogError("AuthenticationStateProvider or AuthClient is null");
+                HandleAuthenticationFailure();
+                return;
+            }
+
             var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
             User = authState.User;
 
@@ -32,24 +43,28 @@ namespace AddressAppServer.Web.BaseClasses
                     }
                     else
                     {
+                        Logger.LogWarning("Failed to refresh token");
                         HandleAuthenticationFailure();
                     }
                 }
                 else
                 {
+                    Logger.LogWarning("Refresh token is null or empty");
                     HandleAuthenticationFailure();
                 }
             }
             else if (!IsUserAuthorized())
             {
+                Logger.LogWarning("User is not authorized");
                 NavigationManager.NavigateTo("/unauthorized", forceLoad: true);
             }
         }
 
         private void HandleAuthenticationFailure()
         {
+            Logger.LogInformation("Handling authentication failure");
             // Log the user out and redirect to the login page
-            AuthenticationStateProvider.MarkUserAsLoggedOut();
+            AuthenticationStateProvider?.MarkUserAsLoggedOut();
             NavigationManager.NavigateTo("/login", forceLoad: true);
         }
 
