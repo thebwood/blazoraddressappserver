@@ -32,18 +32,25 @@ namespace AddressAppServer.Web.BaseClasses
                     }
                     else
                     {
-                        NavigationManager.NavigateTo("/login", forceLoad: true);
+                        HandleAuthenticationFailure();
                     }
                 }
                 else
                 {
-                    NavigationManager.NavigateTo("/login", forceLoad: true);
+                    HandleAuthenticationFailure();
                 }
             }
             else if (!IsUserAuthorized())
             {
                 NavigationManager.NavigateTo("/unauthorized", forceLoad: true);
             }
+        }
+
+        private void HandleAuthenticationFailure()
+        {
+            // Log the user out and redirect to the login page
+            AuthenticationStateProvider.MarkUserAsLoggedOut();
+            NavigationManager.NavigateTo("/login", forceLoad: true);
         }
 
         protected virtual bool IsUserAuthorized() => true;

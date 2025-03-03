@@ -6,9 +6,9 @@ namespace AddressAppServer.Web.BaseClasses
     public class CommonBase : ComponentBase
     {
         [Inject]
-        public NavigationManager NavigationManager { get; set; }
+        public NavigationManager NavigationManager { get; set; } = default!;
         [Inject]
-        public ISnackbar Snackbar { get; set; }
+        public ISnackbar Snackbar { get; set; } = default!;
 
     }
 }
