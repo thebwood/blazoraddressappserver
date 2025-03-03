@@ -42,7 +42,7 @@ namespace AddressAppServer.Web.Services
 
             if (result.Success)
             {
-                await _authStateProvider.MarkUserAsAuthenticated(result.Value.Token, result.Value.RefreshToken);
+                await _authStateProvider.MarkUserAsAuthenticated(result.Value.User, result.Value.Token, result.Value.RefreshToken);
             }
             return result;
         }
@@ -71,7 +71,7 @@ namespace AddressAppServer.Web.Services
 
             if (result.Success)
             {
-                await _authStateProvider.MarkUserAsAuthenticated(result.Value.Token, result.Value.RefreshToken);
+                await _authStateProvider.MarkUserAsAuthenticated(result.Value.User, result.Value.Token, result.Value.RefreshToken);
             }
             else
             {

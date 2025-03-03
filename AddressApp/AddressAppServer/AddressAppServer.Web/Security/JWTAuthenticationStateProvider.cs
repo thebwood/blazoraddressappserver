@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
+﻿using AddressAppServer.ClassLibrary.DTOs;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.IdentityModel.JsonWebTokens;
 using System.Net.Http.Headers;
@@ -34,10 +35,11 @@ namespace AddressAppServer.Web.Security
             return new AuthenticationState(user);
         }
 
-        public async Task MarkUserAsAuthenticated(string token, string refreshToken)
+        public async Task MarkUserAsAuthenticated(UserDTO userDto, string token, string refreshToken)
         {
             await _sessionStorage.SetAsync("accessToken", token);
             await _sessionStorage.SetAsync("refreshToken", refreshToken);
+            await _sessionStorage.SetAsync("user", userDto);
             var user = new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt"));
 
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
@@ -47,6 +49,7 @@ namespace AddressAppServer.Web.Security
         {
             await _sessionStorage.DeleteAsync("accessToken");
             await _sessionStorage.DeleteAsync("refreshToken");
+            await _sessionStorage.DeleteAsync("user");
 
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(_anonymous)));
         }
