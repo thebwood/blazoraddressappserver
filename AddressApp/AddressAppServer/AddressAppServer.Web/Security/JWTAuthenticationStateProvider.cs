@@ -1,4 +1,5 @@
 ﻿using AddressAppServer.ClassLibrary.DTOs;
+using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.IdentityModel.JsonWebTokens;
@@ -9,11 +10,13 @@ namespace AddressAppServer.Web.Security
     public class JWTAuthenticationStateProvider : AuthenticationStateProvider
     {
         private readonly ProtectedSessionStorage _sessionStorage;
+        private readonly NavigationManager _navigationManager;
         private ClaimsPrincipal _anonymous = new ClaimsPrincipal(new ClaimsIdentity());
 
-        public JWTAuthenticationStateProvider(ProtectedSessionStorage sessionStorage)
+        public JWTAuthenticationStateProvider(ProtectedSessionStorage sessionStorage, NavigationManager navigationManager)
         {
             _sessionStorage = sessionStorage;
+            _navigationManager = navigationManager;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
@@ -28,6 +31,7 @@ namespace AddressAppServer.Web.Security
             var token = tokenResult.Value;
             if (IsTokenExpired(token))
             {
+                _navigationManager.NavigateTo("/login");
                 return new AuthenticationState(_anonymous);
             }
 
