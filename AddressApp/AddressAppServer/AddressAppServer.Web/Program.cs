@@ -1,9 +1,8 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using AddressAppServer.Web.Common;
 using AddressAppServer.Web.Components;
 using AddressAppServer.Web.Extensions;
 using AddressAppServer.Web.Middlewares;
-using AddressAppServer.Web.Security;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using MudBlazor.Services;
 using Serilog;
 
@@ -30,7 +29,6 @@ if (string.IsNullOrEmpty(baseAddress))
 }
 
 builder.Services.AddPresentation(baseAddress);
-
 // Add authentication services
 builder.Services.AddAuthentication(options =>
 {
@@ -47,6 +45,8 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+
+
 builder.Host.UseSerilog((context, services, configuration) =>
 {
     configuration.ReadFrom.Configuration(context.Configuration);
@@ -60,13 +60,6 @@ builder.Services.AddLogging(loggingBuilder =>
 var app = builder.Build();
 
 app.UseMiddleware<GlobalExceptionMiddleware>();
-
-// Create a scope to resolve JWTAuthenticationStateProvider and initialize it
-using (var scope = app.Services.CreateScope())
-{
-    var authProvider = scope.ServiceProvider.GetRequiredService<JWTAuthenticationStateProvider>();
-    await authProvider.InitializeAsync();
-}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
