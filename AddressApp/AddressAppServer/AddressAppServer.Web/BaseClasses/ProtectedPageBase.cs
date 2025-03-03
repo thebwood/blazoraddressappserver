@@ -13,6 +13,8 @@ namespace AddressAppServer.Web.BaseClasses
         [Inject]
         protected IAuthClient AuthClient { get; set; } = default!;
         [Inject]
+        protected IStorageService StorageService { get; set; } = default!;
+        [Inject]
         protected ILogger<ProtectedPageBase> Logger { get; set; } = default!;
 
         protected ClaimsPrincipal? User { get; private set; }
@@ -40,7 +42,7 @@ namespace AddressAppServer.Web.BaseClasses
 
             if (!User.Identity.IsAuthenticated)
             {
-                var refreshToken = await AuthenticationStateProvider.GetRefreshTokenAsync();
+                var refreshToken = await StorageService.GetRefreshTokenAsync();
                 if (!string.IsNullOrEmpty(refreshToken))
                 {
                     var result = await AuthClient.RefreshTokenAsync(refreshToken);

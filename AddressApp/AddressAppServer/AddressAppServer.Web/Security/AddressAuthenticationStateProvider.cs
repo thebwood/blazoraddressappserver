@@ -1,7 +1,7 @@
 ﻿using AddressAppServer.ClassLibrary.DTOs;
+using AddressAppServer.Web.Services.Interfaces;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
 using Microsoft.IdentityModel.JsonWebTokens;
 using System.Net.Http.Headers;
 using System.Security.Claims;
@@ -9,26 +9,25 @@ namespace AddressAppServer.Web.Security
 {
     public class AddressAuthenticationStateProvider : AuthenticationStateProvider
     {
-        private readonly ProtectedSessionStorage _sessionStorage;
+        private readonly IStorageService _storageService;
         private readonly NavigationManager _navigationManager;
         private ClaimsPrincipal _anonymous = new ClaimsPrincipal(new ClaimsIdentity());
 
-        public AddressAuthenticationStateProvider(ProtectedSessionStorage sessionStorage, NavigationManager navigationManager)
+        public AddressAuthenticationStateProvider(IStorageService storageService, NavigationManager navigationManager)
         {
-            _sessionStorage = sessionStorage;
+            _storageService = storageService;
             _navigationManager = navigationManager;
         }
 
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
-            var tokenResult = await _sessionStorage.GetAsync<string>("accessToken");
+            var token = await _storageService.GetAccessTokenAsync();
 
-            if (!tokenResult.Success || string.IsNullOrEmpty(tokenResult.Value))
+            if (string.IsNullOrEmpty(token))
             {
                 return new AuthenticationState(_anonymous);
             }
 
-            var token = tokenResult.Value;
             if (IsTokenExpired(token))
             {
                 _navigationManager.NavigateTo("/login");
@@ -41,9 +40,9 @@ namespace AddressAppServer.Web.Security
 
         public async Task MarkUserAsAuthenticated(UserDTO userDto, string token, string refreshToken)
         {
-            await _sessionStorage.SetAsync("accessToken", token);
-            await _sessionStorage.SetAsync("refreshToken", refreshToken);
-            await _sessionStorage.SetAsync("user", userDto);
+            await _storageService.SetAccessTokenAsync(token);
+            await _storageService.SetRefreshTokenAsync(refreshToken);
+            await _storageService.SetUserAsync(userDto);
             var user = new ClaimsPrincipal(new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt"));
 
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(user)));
@@ -51,40 +50,19 @@ namespace AddressAppServer.Web.Security
 
         public async Task MarkUserAsLoggedOut()
         {
-            await _sessionStorage.DeleteAsync("accessToken");
-            await _sessionStorage.DeleteAsync("refreshToken");
-            await _sessionStorage.DeleteAsync("user");
-
+            await _storageService.ClearStorageAsync();
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(_anonymous)));
         }
 
         public async Task<bool> SetAuthorizationHeaderAsync(HttpClient httpClient)
         {
-            var tokenResult = await _sessionStorage.GetAsync<string>("accessToken");
-            if (tokenResult.Success && tokenResult.Value != null)
+            var token = await _storageService.GetAccessTokenAsync();
+            if (token != null)
             {
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", tokenResult.Value);
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
                 return true;
             }
             return false;
-        }
-
-        public async Task<string?> GetAccessTokenAsync()
-        {
-            var tokenResult = await _sessionStorage.GetAsync<string>("accessToken");
-            return tokenResult.Success ? tokenResult.Value : null;
-        }
-
-        public async Task<string?> GetRefreshTokenAsync()
-        {
-            var tokenResult = await _sessionStorage.GetAsync<string>("refreshToken");
-            return tokenResult.Success ? tokenResult.Value : null;
-        }
-
-        public async Task<UserDTO?> GetUserAsync()
-        {
-            var userResult = await _sessionStorage.GetAsync<UserDTO>("user");
-            return userResult.Success ? userResult.Value : null;
         }
 
         private static bool IsTokenExpired(string token)
