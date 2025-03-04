@@ -5,6 +5,7 @@ using AddressAppServer.Web.Extensions;
 using AddressAppServer.Web.Middlewares;
 using MudBlazor.Services;
 using Serilog;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -58,6 +59,9 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddAuthorization();
+
+// Register BlazorAuthorizationMiddlewareResultHandler as scoped
+builder.Services.AddScoped<IAuthorizationMiddlewareResultHandler, BlazorAuthorizationMiddlewareResultHandler>();
 
 builder.Host.UseSerilog((context, services, configuration) =>
 {

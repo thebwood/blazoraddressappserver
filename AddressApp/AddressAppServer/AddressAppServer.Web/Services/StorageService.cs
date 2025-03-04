@@ -6,51 +6,51 @@ namespace AddressAppServer.Web.Services
 {
     public class StorageService : IStorageService
     {
-        private readonly ProtectedSessionStorage _sessionStorage;
+        private readonly ProtectedLocalStorage _localStorage;
 
-        public StorageService(ProtectedSessionStorage sessionStorage)
+        public StorageService(ProtectedLocalStorage localStorage)
         {
-            _sessionStorage = sessionStorage;
+            _localStorage = localStorage;
         }
 
         public async Task SetAccessTokenAsync(string token)
         {
-            await _sessionStorage.SetAsync("accessToken", token);
+            await _localStorage.SetAsync("accessToken", token);
         }
 
         public async Task<string?> GetAccessTokenAsync()
         {
-            var tokenResult = await _sessionStorage.GetAsync<string>("accessToken");
+            var tokenResult = await _localStorage.GetAsync<string>("accessToken");
             return tokenResult.Success ? tokenResult.Value : null;
         }
 
         public async Task SetRefreshTokenAsync(string refreshToken)
         {
-            await _sessionStorage.SetAsync("refreshToken", refreshToken);
+            await _localStorage.SetAsync("refreshToken", refreshToken);
         }
 
         public async Task<string?> GetRefreshTokenAsync()
         {
-            var tokenResult = await _sessionStorage.GetAsync<string>("refreshToken");
+            var tokenResult = await _localStorage.GetAsync<string>("refreshToken");
             return tokenResult.Success ? tokenResult.Value : null;
         }
 
         public async Task SetUserAsync(UserDTO user)
         {
-            await _sessionStorage.SetAsync("user", user);
+            await _localStorage.SetAsync("user", user);
         }
 
         public async Task<UserDTO?> GetUserAsync()
         {
-            var userResult = await _sessionStorage.GetAsync<UserDTO>("user");
+            var userResult = await _localStorage.GetAsync<UserDTO>("user");
             return userResult.Success ? userResult.Value : null;
         }
 
         public async Task ClearStorageAsync()
         {
-            await _sessionStorage.DeleteAsync("accessToken");
-            await _sessionStorage.DeleteAsync("refreshToken");
-            await _sessionStorage.DeleteAsync("user");
+            await _localStorage.DeleteAsync("accessToken");
+            await _localStorage.DeleteAsync("refreshToken");
+            await _localStorage.DeleteAsync("user");
         }
     }
 }
