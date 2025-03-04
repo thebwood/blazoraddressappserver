@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Components;
 using System.Security.Claims;
 using AddressAppServer.Web.Security;
 using AddressAppServer.Web.Services.Interfaces;
+using AddressAppServer.ClassLibrary.Common;
+using AddressAppServer.ClassLibrary.DTOs;
 
 namespace AddressAppServer.Web.BaseClasses
 {
@@ -40,33 +42,27 @@ namespace AddressAppServer.Web.BaseClasses
 
             User = authState.User;
 
-            if (!User.Identity.IsAuthenticated)
+            var refreshToken = await StorageService.GetRefreshTokenAsync();
+            if (!string.IsNullOrEmpty(refreshToken))
             {
-                var refreshToken = await StorageService.GetRefreshTokenAsync();
-                if (!string.IsNullOrEmpty(refreshToken))
+                UserDTO? user = await StorageService.GetUserAsync();
+                Result<RefreshUserTokenResponseDTO>? result = await AuthClient.RefreshTokenAsync(user, refreshToken);
+                if (result.Success)
                 {
-                    var result = await AuthClient.RefreshTokenAsync(refreshToken);
-                    if (result.Success)
-                    {
-                        await AuthenticationStateProvider.MarkUserAsAuthenticated(result.Value.User, result.Value.Token, result.Value.RefreshToken);
-                    }
-                    else
-                    {
-                        Logger.LogWarning("Failed to refresh token");
-                        HandleAuthenticationFailure();
-                    }
+                    await AuthenticationStateProvider.MarkUserAsAuthenticated(result.Value.User, result.Value.Token, result.Value.RefreshToken);
                 }
                 else
                 {
-                    Logger.LogWarning("Refresh token is null or empty");
+                    Logger.LogWarning("Failed to refresh token");
                     HandleAuthenticationFailure();
                 }
             }
-            else if (!IsUserAuthorized())
+            else
             {
-                Logger.LogWarning("User is not authorized");
-                NavigationManager.NavigateTo("/unauthorized", forceLoad: true);
+                Logger.LogWarning("Refresh token is null or empty");
+                HandleAuthenticationFailure();
             }
+
         }
 
         private void HandleAuthenticationFailure()

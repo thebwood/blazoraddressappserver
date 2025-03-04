@@ -73,6 +73,10 @@ builder.Services.AddLogging(loggingBuilder =>
     loggingBuilder.AddSerilog();
 });
 
+// Configure CircuitOptions for detailed errors
+builder.Services.AddServerSideBlazor()
+    .AddCircuitOptions(options => { options.DetailedErrors = true; });
+
 var app = builder.Build();
 
 app.UseMiddleware<GlobalExceptionMiddleware>();

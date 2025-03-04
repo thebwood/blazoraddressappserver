@@ -7,6 +7,7 @@ using System.Text.Json;
 using System.Text;
 using AddressAppServer.Web.Security;
 using System.Net;
+using Microsoft.AspNetCore.Identity.Data;
 
 namespace AddressAppServer.Web.Services
 {
@@ -15,14 +16,12 @@ namespace AddressAppServer.Web.Services
         private readonly HttpClient _httpClient;
         private readonly AddressAuthenticationStateProvider _authStateProvider;
         private readonly IConfiguration _configuration;
-        private readonly ProtectedSessionStorage _protectedSessionStorage;
 
-        public AuthClient(HttpClient httpClient, AddressAuthenticationStateProvider authStateProver, IConfiguration configuration, ProtectedSessionStorage protectedSessionStorage)
+        public AuthClient(HttpClient httpClient, AddressAuthenticationStateProvider authStateProver, IConfiguration configuration)
         {
             _httpClient = httpClient;
             _authStateProvider = authStateProver;
             _configuration = configuration;
-            _protectedSessionStorage = protectedSessionStorage;
         }
 
         public async Task<Result<UserLoginResponseDTO>> LoginAsync(UserLoginModel loginModel)
@@ -54,16 +53,17 @@ namespace AddressAppServer.Web.Services
             await _authStateProvider.MarkUserAsLoggedOut();
         }
 
-        public async Task<Result<RefreshUserTokenResponseDTO>> RefreshTokenAsync(string refreshToken)
+        public async Task<Result<RefreshUserTokenResponseDTO>> RefreshTokenAsync(UserDTO userDto, string refreshToken)
         {
-            var refreshRequest = new RefreshUserTokenRequestDTO
+            RefreshUserTokenRequestDTO refreshRequest = new RefreshUserTokenRequestDTO
             {
-                User = new UserDTO(),
+                User = userDto,
                 RefreshToken = refreshToken
             };
 
             string jsonPayload = JsonSerializer.Serialize(refreshRequest);
             StringContent? requestContent = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
 
             using HttpResponseMessage response = await _httpClient.PostAsync("api/auth/refresh", requestContent);
             string? content = await response.Content.ReadAsStringAsync();
@@ -80,5 +80,6 @@ namespace AddressAppServer.Web.Services
 
             return result;
         }
+
     }
 }
