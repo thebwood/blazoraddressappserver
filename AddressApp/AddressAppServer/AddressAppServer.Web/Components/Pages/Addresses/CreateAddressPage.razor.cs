@@ -15,9 +15,9 @@ namespace AddressAppServer.Web.Components.Pages.Addresses
         [Inject]
         private ILogger<AddressesPage> Logger { get; set; }
 
-        protected override void OnInitialized()
+        protected override async Task OnInitializedAsync()
         {
-            base.OnInitialized();
+            await base.OnInitializedAsync();
             try
             {
                 _addressViewModel.IsNew = true;

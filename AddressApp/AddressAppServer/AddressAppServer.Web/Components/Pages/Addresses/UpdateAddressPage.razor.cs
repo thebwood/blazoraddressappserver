@@ -19,8 +19,8 @@ namespace AddressAppServer.Web.Components.Pages.Addresses
 
         protected override async Task OnInitializedAsync()
         {
-            base.OnInitialized();
-            try
+            await base.OnInitializedAsync();
+             try
             {
                 _addressViewModel.IsNew = false;
                 _stateViewModel.IsLoading = true;

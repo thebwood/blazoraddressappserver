@@ -27,7 +27,7 @@ namespace AddressAppServer.Web.Components.Pages.Admin
 
         protected override async Task OnInitializedAsync()
         {
-            base.OnInitialized();
+            await base.OnInitializedAsync();
 
             UsersViewModel.UsersLoaded += UsersLoaded;
             try

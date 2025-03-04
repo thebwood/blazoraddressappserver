@@ -19,9 +19,8 @@ namespace AddressAppServer.Web.Components.Pages.Addresses
 
         protected override async Task OnInitializedAsync()
         {
-            base.OnInitialized();
+            await base.OnInitializedAsync();
             AddressesViewModel.OnAddressesDeleted += AddressesDeleted;
-
             try
             {
                 _stateViewModel.IsLoading = true;
@@ -33,10 +32,12 @@ namespace AddressAppServer.Web.Components.Pages.Addresses
             }
         }
 
+
         private void CreateAddress()
         {
             NavigationManager.NavigateTo($"/Addresses/Create");
         }
+
         private void AddressesDeleted(Result result)
         {
             try
