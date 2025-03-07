@@ -2,31 +2,18 @@ using AddressAppServer.Web.Components;
 using AddressAppServer.Web.Extensions;
 using AddressAppServer.Web.Middlewares;
 using MudBlazor.Services;
-using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
-    .AddInteractiveServerComponents();
+    .AddInteractiveServerComponents()
+    .AddCircuitOptions(option => option.DetailedErrors = true);
 builder.Services.AddMudServices();
 
-builder.Services.AddPresentation(builder.Configuration);
+builder.Services.AddPresentation(builder.Configuration, builder.Host);
 
-
-builder.Host.UseSerilog((context, services, configuration) =>
-{
-    configuration.ReadFrom.Configuration(context.Configuration);
-});
-
-builder.Services.AddLogging(loggingBuilder =>
-{
-    loggingBuilder.AddSerilog();
-});
-
-// Configure CircuitOptions for detailed errors
-builder.Services.AddServerSideBlazor()
-    .AddCircuitOptions(options => { options.DetailedErrors = true; });
+builder.Services.AddServerSideBlazor();
 
 var app = builder.Build();
 

@@ -17,13 +17,14 @@ using Microsoft.IdentityModel.Tokens;
 using Polly;
 using Polly.Extensions.Http;
 using Polly.Retry;
+using Serilog;
 using System.Text;
 
 namespace AddressAppServer.Web.Extensions
 {
     public static class DependencyInjection
     {
-        public static IServiceCollection AddPresentation(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddPresentation(this IServiceCollection services, IConfiguration configuration, ConfigureHostBuilder host)
         {
             services.Configure<ApiSettings>(configuration.GetSection("ApiSettings"));
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
@@ -114,6 +115,18 @@ namespace AddressAppServer.Web.Extensions
             });
 
             services.AddAuthorization();
+
+
+            host.UseSerilog((context, services, configuration) =>
+            {
+                configuration.ReadFrom.Configuration(context.Configuration);
+            });
+
+            services.AddLogging(loggingBuilder =>
+            {
+                loggingBuilder.AddSerilog();
+            });
+
 
             services.AddCascadingAuthenticationState();
 
