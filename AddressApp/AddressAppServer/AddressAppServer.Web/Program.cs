@@ -9,6 +9,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
     .AddCircuitOptions(option => option.DetailedErrors = true);
+
 builder.Services.AddMudServices();
 
 builder.Services.AddPresentation(builder.Configuration, builder.Host);
@@ -31,6 +32,7 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
+
 
 // Add authentication and authorization middleware
 app.UseAuthentication();

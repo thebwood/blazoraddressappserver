@@ -50,7 +50,6 @@ namespace AddressAppServer.Web.Extensions
             // Add HttpClient with retry policy and exception handling
             services.AddHttpClient<IAuthClient, AuthClient>((serviceProvider, client) =>
             {
-                ApiSettings? apiSettings = serviceProvider.GetRequiredService<IOptions<ApiSettings>>().Value;
                 client.BaseAddress = new Uri(apiSettings.BaseUrl);
 
             })
@@ -59,7 +58,6 @@ namespace AddressAppServer.Web.Extensions
 
             services.AddHttpClient<IAddressClient, AddressClient>((serviceProvider, client) =>
             {
-                ApiSettings? apiSettings = serviceProvider.GetRequiredService<IOptions<ApiSettings>>().Value;
                 client.BaseAddress = new Uri(apiSettings.BaseUrl);
 
             })
@@ -67,7 +65,6 @@ namespace AddressAppServer.Web.Extensions
 
             services.AddHttpClient<IAdminClient, AdminClient>((serviceProvider, client) =>
             {
-                ApiSettings? apiSettings = serviceProvider.GetRequiredService<IOptions<ApiSettings>>().Value;
                 client.BaseAddress = new Uri(apiSettings.BaseUrl);
 
             })
