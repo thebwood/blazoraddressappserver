@@ -5,6 +5,8 @@ using AddressAppServer.Web.Security;
 using AddressAppServer.Web.Services.Interfaces;
 using AddressAppServer.ClassLibrary.Common;
 using AddressAppServer.ClassLibrary.DTOs;
+using AddressAppServer.Web.Services;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace AddressAppServer.Web.BaseClasses
 {
@@ -39,30 +41,41 @@ namespace AddressAppServer.Web.BaseClasses
                 HandleAuthenticationFailure();
                 return;
             }
-
             User = authState.User;
 
             var refreshToken = await StorageService.GetRefreshTokenAsync();
-            if (!string.IsNullOrEmpty(refreshToken))
+            var token = await StorageService.GetAccessTokenAsync();
+            var userDto = await StorageService.GetUserAsync();
+            if (!string.IsNullOrEmpty(token) && !string.IsNullOrEmpty(refreshToken) && userDto != null)
             {
-                UserDTO? user = await StorageService.GetUserAsync();
-                Result<RefreshUserTokenResponseDTO>? result = await AuthClient.RefreshTokenAsync(user, refreshToken);
-                if (result.Success)
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
+
+                if (jwtToken != null && jwtToken.ValidTo < DateTime.UtcNow.AddMinutes(5))
                 {
-                    await AuthenticationStateProvider.MarkUserAsAuthenticated(result.Value.User, result.Value.Token, result.Value.RefreshToken);
+                    var result = await AuthClient.RefreshTokenAsync(userDto, refreshToken);
+                    if (result.Success)
+                    {
+                        await AuthenticationStateProvider.MarkUserAsAuthenticated(result.Value.User, result.Value.Token, result.Value.RefreshToken);
+                    }
+                    else
+                    {
+                        Logger.LogWarning("Failed to refresh token");
+                        HandleAuthenticationFailure();
+                    }
                 }
-                else
+
+                if(jwtToken.ValidTo > DateTime.UtcNow)
                 {
-                    Logger.LogWarning("Failed to refresh token");
+                    Logger.LogWarning("User has been logged out");
                     HandleAuthenticationFailure();
                 }
             }
             else
             {
-                Logger.LogWarning("Refresh token is null or empty");
+                Logger.LogWarning("Token, refresh token, or user DTO is null or empty");
                 HandleAuthenticationFailure();
             }
-
         }
 
         private void HandleAuthenticationFailure()
