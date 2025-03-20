@@ -1,12 +1,8 @@
-﻿using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.AspNetCore.Components;
-using System.Security.Claims;
-using AddressAppServer.Web.Security;
+﻿using AddressAppServer.Web.Security;
 using AddressAppServer.Web.Services.Interfaces;
-using AddressAppServer.ClassLibrary.Common;
-using AddressAppServer.ClassLibrary.DTOs;
-using AddressAppServer.Web.Services;
+using Microsoft.AspNetCore.Components;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace AddressAppServer.Web.BaseClasses
 {
@@ -23,9 +19,9 @@ namespace AddressAppServer.Web.BaseClasses
 
         protected ClaimsPrincipal? User { get; private set; }
 
-        protected override async Task OnInitializedAsync()
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            Logger.LogInformation("OnInitializedAsync called");
+            Logger.LogInformation("OnAfterRenderAsync called");
 
             if (AuthenticationStateProvider == null || AuthClient == null)
             {
@@ -34,24 +30,46 @@ namespace AddressAppServer.Web.BaseClasses
                 return;
             }
 
-            var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
-            if (authState == null)
+            try
             {
-                Logger.LogError("AuthenticationState is null");
-                HandleAuthenticationFailure();
-                return;
-            }
-            User = authState.User;
+                var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+                if (authState == null)
+                {
+                    Logger.LogError("AuthenticationState is null");
+                    HandleAuthenticationFailure();
+                    return;
+                }
+                User = authState.User;
 
-            var refreshToken = await StorageService.GetRefreshTokenAsync();
-            var token = await StorageService.GetAccessTokenAsync();
-            var userDto = await StorageService.GetUserAsync();
-            if (!string.IsNullOrEmpty(token) && !string.IsNullOrEmpty(refreshToken) && userDto != null)
-            {
+                var refreshToken = await StorageService.GetRefreshTokenAsync();
+                var token = await StorageService.GetAccessTokenAsync();
+                var userDto = await StorageService.GetUserAsync();
+
+                if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(refreshToken) || userDto == null)
+                {
+                    Logger.LogWarning("Token, refresh token, or user DTO is null or empty");
+                    HandleAuthenticationFailure();
+                    return;
+                }
+
                 var handler = new JwtSecurityTokenHandler();
                 var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
 
-                if (jwtToken != null && jwtToken.ValidTo < DateTime.UtcNow.AddMinutes(5))
+                if (jwtToken == null)
+                {
+                    Logger.LogWarning("Invalid JWT token");
+                    HandleAuthenticationFailure();
+                    return;
+                }
+
+                // TODO: Value is getting set to null.  Need to inveestigate why this is happening.
+                //if (jwtToken.ValidTo <= DateTime.UtcNow)
+                //{
+                //    Logger.LogWarning("User has been logged out");
+                //    HandleAuthenticationFailure();
+                //}
+
+                if (jwtToken.ValidTo < DateTime.UtcNow.AddMinutes(5))
                 {
                     var result = await AuthClient.RefreshTokenAsync(userDto, refreshToken);
                     if (result.Success)
@@ -65,15 +83,10 @@ namespace AddressAppServer.Web.BaseClasses
                     }
                 }
 
-                if(jwtToken.ValidTo > DateTime.UtcNow)
-                {
-                    Logger.LogWarning("User has been logged out");
-                    HandleAuthenticationFailure();
-                }
             }
-            else
+            catch (Exception ex)
             {
-                Logger.LogWarning("Token, refresh token, or user DTO is null or empty");
+                Logger.LogError(ex, "An error occurred during authentication");
                 HandleAuthenticationFailure();
             }
         }
@@ -81,7 +94,6 @@ namespace AddressAppServer.Web.BaseClasses
         private void HandleAuthenticationFailure()
         {
             Logger.LogInformation("Handling authentication failure");
-            // Log the user out and redirect to the login page
             AuthenticationStateProvider?.MarkUserAsLoggedOut();
             NavigationManager.NavigateTo("/login", forceLoad: true);
         }

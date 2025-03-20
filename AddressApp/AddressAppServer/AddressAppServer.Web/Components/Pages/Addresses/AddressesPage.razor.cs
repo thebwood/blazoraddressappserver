@@ -17,34 +17,50 @@ namespace AddressAppServer.Web.Components.Pages.Addresses
         [Inject]
         private ILogger<AddressesPage> Logger { get; set; }
 
-        protected override async Task OnInitializedAsync()
+        protected override void OnInitialized()
         {
-            await base.OnInitializedAsync();
             AddressesViewModel.OnAddressesDeleted += AddressesDeleted;
-            try
-            {
-                _stateViewModel.IsLoading = true;
-                await AddressesViewModel.GetAddresses();
-            }
-            finally
-            {
-                _stateViewModel.IsLoading = false;
-            }
         }
 
+        protected override async Task OnAfterRenderAsync(bool firstRender)
+        {
+            await base.OnAfterRenderAsync(firstRender);
+            if (firstRender)
+            {
+                try
+                {
+                    _stateViewModel.IsLoading = true;
+                    await AddressesViewModel.GetAddresses();
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogError(ex, "Error loading addresses");
+                    Snackbar.Add("An error occurred while loading addresses.", Severity.Error);
+                }
+                finally
+                {
+                    _stateViewModel.IsLoading = false;
+                }
+            }
+        }
 
         private void CreateAddress()
         {
-            NavigationManager.NavigateTo($"/Addresses/Create");
+            NavigationManager.NavigateTo("/Addresses/Create");
         }
 
-        private void AddressesDeleted(Result result)
+        private async void AddressesDeleted(Result result)
         {
             try
             {
                 Snackbar.Add(result.Message, Severity.Success);
                 _stateViewModel.IsLoading = true;
-                AddressesViewModel.GetAddresses();
+                await AddressesViewModel.GetAddresses();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogError(ex, "Error reloading addresses after deletion");
+                Snackbar.Add("An error occurred while reloading addresses.", Severity.Error);
             }
             finally
             {

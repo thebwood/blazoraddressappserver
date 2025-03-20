@@ -3,6 +3,7 @@ using AddressAppServer.Web.Services.Interfaces;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.IdentityModel.JsonWebTokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 namespace AddressAppServer.Web.Security
@@ -40,6 +41,9 @@ namespace AddressAppServer.Web.Security
 
         public async Task MarkUserAsAuthenticated(UserDTO userDto, string token, string refreshToken)
         {
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadToken(token) as JwtSecurityToken;
+
             await _storageService.SetAccessTokenAsync(token);
             await _storageService.SetRefreshTokenAsync(refreshToken);
             await _storageService.SetUserAsync(userDto);

@@ -20,24 +20,31 @@ namespace AddressAppServer.Web.Components.Pages.Admin
         private ILogger<AddressesPage> Logger { get; set; }
 
         private List<UserModel> _users = new();
+        protected override void OnInitialized()
+        {
+            base.OnInitialized();
+            UsersViewModel.UsersLoaded += UsersLoaded;
+        }
+
         public void Dispose()
         {
             UsersViewModel.UsersLoaded -= UsersLoaded;
         }
 
-        protected override async Task OnInitializedAsync()
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            await base.OnInitializedAsync();
-
-            UsersViewModel.UsersLoaded += UsersLoaded;
-            try
+            await base.OnAfterRenderAsync(firstRender);
+            if (firstRender)
             {
-                _stateViewModel.IsLoading = true;
-                await UsersViewModel.GetUsers();
-            }
-            finally
-            {
-                _stateViewModel.IsLoading = false;
+                try
+                {
+                    _stateViewModel.IsLoading = true;
+                    await UsersViewModel.GetUsers();
+                }
+                finally
+                {
+                    _stateViewModel.IsLoading = false;
+                }
             }
         }
 

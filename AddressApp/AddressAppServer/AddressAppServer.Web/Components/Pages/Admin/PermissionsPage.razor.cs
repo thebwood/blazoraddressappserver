@@ -4,9 +4,11 @@ namespace AddressAppServer.Web.Components.Pages.Admin
 { 
     public partial class PermissionsPage : ProtectedPageBase
     {
-        protected override void OnInitialized()
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            base.OnInitialized();
+            await base.OnAfterRenderAsync(firstRender);
+            if (!firstRender)
+                return;
         }
     }
 }

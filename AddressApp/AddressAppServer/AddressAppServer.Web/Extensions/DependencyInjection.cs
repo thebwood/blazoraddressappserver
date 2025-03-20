@@ -16,6 +16,7 @@ using Polly;
 using Polly.Extensions.Http;
 using Polly.Retry;
 using Serilog;
+using System.Security.Claims;
 using System.Text;
 
 namespace AddressAppServer.Web.Extensions
@@ -88,24 +89,19 @@ namespace AddressAppServer.Web.Extensions
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-            .AddCookie(options =>
-            {
-                options.AccessDeniedPath = "/denied";
-                options.LoginPath = "/login";
-                options.ExpireTimeSpan = TimeSpan.FromMinutes(15);
-                options.Cookie.HttpOnly = true;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.None;
-                options.Cookie.SameSite = SameSiteMode.Lax;
-            })
             .AddJwtBearer(options =>
             {
+                options.UseSecurityTokenValidators = true;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new SymmetricSecurityKey(key)
+                    ValidIssuer = jwtSettings.Issuer,
+                    ValidAudience = jwtSettings.Audience,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    RoleClaimType = ClaimTypes.Role // Ensure roles are validated
                 };
             });
 

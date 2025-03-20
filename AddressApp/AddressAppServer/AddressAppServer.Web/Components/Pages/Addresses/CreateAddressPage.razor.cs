@@ -15,18 +15,21 @@ namespace AddressAppServer.Web.Components.Pages.Addresses
         [Inject]
         private ILogger<AddressesPage> Logger { get; set; }
 
-        protected override async Task OnInitializedAsync()
+        protected override async Task OnAfterRenderAsync(bool firstRender)
         {
-            await base.OnInitializedAsync();
-            try
+            await base.OnAfterRenderAsync(firstRender);
+            if (firstRender)
             {
-                _addressViewModel.IsNew = true;
-                _stateViewModel.IsLoading = true;
-                _addressViewModel.GetAddress();
-            }
-            finally
-            {
-                _stateViewModel.IsLoading = false;
+                try
+                {
+                    _addressViewModel.IsNew = true;
+                    _stateViewModel.IsLoading = true;
+                    _addressViewModel.GetAddress();
+                }
+                finally
+                {
+                    _stateViewModel.IsLoading = false;
+                }
             }
         }
     }
